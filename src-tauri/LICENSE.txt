@@ -1,0 +1,79 @@
+﻿魔唱 MagiSing 授權、聲明與隱私政策
+Copyright © 2026 Johnny
+原始碼：https://github.com/johnnyjong823/magising
+網站：https://johnnyx9487.bdcweb.org/
+
+一、開源授權（GPL-3.0）
+1. 魔唱是自由開源軟體，以 GNU General Public License 第 3 版或其後任何版本（GPL-3.0-or-later）授權，完全免費、沒有廣告。
+2. 你可以自由使用、複製、修改和散布本軟體。如果散布修改後的版本，必須同樣以 GPL-3.0 開源並提供原始碼，同時保留原作者的著作權聲明。完整條款見 https://www.gnu.org/licenses/gpl-3.0.html。
+3. 「魔唱」「MagiSing」名稱與程式圖示代表原作者發行的版本，不在上述授權範圍內。發行修改版時請改用其他名稱，以免使用者混淆。
+
+二、贊助
+魔唱接受自由斗內，用來支持開發者繼續維護。斗內完全自願，不會解鎖或限制任何功能。付款由第三方金流（綠界科技）處理，魔唱不會經手或保存你的付款資料。
+
+三、非官方聲明
+本軟體是個人開發的獨立工具，和網易雲音樂、酷狗音樂、LRCLIB、YouTube Music、Spotify、Apple Music、KKBOX、Microsoft 等公司或服務沒有任何關係，也沒有得到它們的授權或背書。文中提到的名稱與商標屬於各自的所有者。
+
+四、歌詞與著作權
+1. 本軟體本身不提供歌詞。歌詞是播放時依歌名到第三方網路服務查詢後顯示，著作權屬於原詞曲作者與權利人。
+2. 歌詞只快取在你自己的電腦上，供個人練唱使用。請不要把取得的歌詞拿去公開散布或做商業用途。
+3. 若權利人認為內容有疑慮，請透過上面的網站或 GitHub 與作者聯絡。
+
+五、第三方服務
+歌詞來源（網易雲音樂、酷狗音樂、LRCLIB）都是第三方提供的服務，作者無法控制它們的內容、正確性與可用性，這些服務隨時可能變更、限制或停止，屆時部分功能可能無法使用。你在使用時也應遵守這些服務的條款。
+
+六、隱私政策
+1. 本軟體不需要註冊帳號，不收集你的個人資料，也沒有廣告或使用追蹤。
+2. 為了找歌詞，本軟體會把「正在播放的歌名、歌手與歌曲長度」（LRCLIB 另含專輯名稱），以及你手動搜尋時輸入的關鍵字，傳送給上面列出的歌詞服務。其中酷狗音樂的歌曲搜尋使用未加密的 HTTP 連線。這些服務如何處理收到的資料，依它們各自的隱私政策。
+3. 你可以在「設定 → 歌詞來源」關掉任何一個或全部歌詞服務。全部關掉時，本軟體只使用你電腦裡的 .lrc 檔，不會把歌曲資訊傳出去。
+4. 本軟體會讀取 Windows「媒體控制」裡播放器提供的歌曲資訊（歌名、歌手、播放進度、封面），只用來顯示字幕，不會傳出。
+5. 設定、歌詞快取與紀錄檔只存在你的電腦（%APPDATA%\MagiSing\；免安裝版則在程式旁的 data\ 資料夾），不會上傳。網頁元件（WebView2）的暫存檔在 %LOCALAPPDATA%\com.magising.app\。解除安裝時勾選「刪除應用程式資料」會一併刪除這兩個資料夾，也可以自己手動刪除。
+6. 本軟體會註冊全域快捷鍵；開機自動啟動預設關閉，要你自己打開。外部連結（網站、GitHub、斗內）只有在你按下按鈕時才會用瀏覽器開啟。
+
+七、免責聲明
+本軟體依「現況」提供，不提供任何明示或默示的保證，包括但不限於適售性、特定用途適用性與不侵權。在法律允許的最大範圍內，作者不對因使用或無法使用本軟體所造成的任何直接、間接、附帶或衍生損害負責。（詳見 GPL-3.0 第 15、16 條。）
+
+八、開源元件
+本軟體使用了多個開源元件（例如 Tauri、OpenCC、Cubic 11 字型），它們依各自的授權條款散布。完整清單與授權全文見安裝資料夾裡的 THIRD-PARTY-NOTICES.txt。
+
+==============================================================================
+
+MagiSing — License, Notices and Privacy Policy
+Copyright © 2026 Johnny
+Source code: https://github.com/johnnyjong823/magising
+
+1. License. MagiSing is free and open-source software licensed under the GNU
+   General Public License v3.0 or later (GPL-3.0-or-later). It is free of charge
+   and has no ads. You may use, copy, modify and distribute it; modified versions
+   must also be released under the GPL with source code. The names "魔唱" and
+   "MagiSing" and the program icon identify the author's official builds and are
+   not covered by the license; please rename modified versions.
+2. Donations are voluntary and do not unlock or restrict any feature. Payments
+   are handled by a third-party processor (ECPay); MagiSing never sees them.
+3. Unofficial. MagiSing is an independent tool. It is not affiliated with,
+   authorized or endorsed by NetEase Cloud Music, Kugou, LRCLIB, YouTube Music,
+   Spotify, Apple Music, KKBOX or Microsoft. All trademarks belong to their
+   respective owners.
+4. Lyrics. MagiSing does not ship lyrics. Lyrics are fetched from third-party
+   services and remain the property of their copyright holders. They are cached
+   only on your computer for personal karaoke practice; do not redistribute them.
+5. Third-party services may change, restrict or stop at any time. You are
+   responsible for complying with their terms.
+6. Privacy. No account, no ads, no analytics. To find lyrics, the title, artist
+   and duration of the song being played (plus the album, for LRCLIB) and any
+   keywords you type into manual search are sent to the lyrics services above.
+   Kugou song search uses unencrypted HTTP. You can turn off any or all of these
+   services in Settings; with all of them off, only local .lrc files are used
+   and no song information leaves your computer. Song information read from
+   Windows media controls is used only to show lyrics. Settings, lyrics cache
+   and logs stay on your computer (%APPDATA%\MagiSing\, or the data\ folder next
+   to the program in portable mode); WebView2 cache files are kept in
+   %LOCALAPPDATA%\com.magising.app\. Both are removed if you tick "delete app
+   data" when uninstalling. External links (website, GitHub, donation) open in
+   your browser only when you click them.
+7. Disclaimer. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AUTHOR IS NOT LIABLE FOR ANY
+   DAMAGES ARISING FROM THE USE OF OR INABILITY TO USE THE SOFTWARE (see GPL-3.0
+   sections 15 and 16).
+8. Open-source components are distributed under their own licenses; see
+   THIRD-PARTY-NOTICES.txt in the installation folder.

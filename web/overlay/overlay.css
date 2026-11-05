@@ -1,0 +1,94 @@
+html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; }
+body {
+  font-family: var(--pixel-font);
+  --fs: 48px;
+  --unsung: #ffffff;
+  --sung-from: #62d0ff;
+  --sung-to: #b98cff;
+  --outline: #0d2747;
+  --o: .06em;                                    /* 外框粗細 */
+}
+body.font-normal .line { font-family: "Microsoft JhengHei", "Segoe UI", sans-serif; font-weight: 900; }
+
+/* ---------- 歌詞 ---------- */
+#lyrics { position: absolute; inset: 0; transition: opacity .5s; opacity: var(--opacity, 1); }
+body.faded #lyrics { opacity: 0; }
+.slot { position: absolute; left: 4%; right: 4%; height: calc(var(--fs) * 1.35); display: flex; align-items: center; }
+#slotA { top: 19%; justify-content: flex-start; }
+#slotB { top: 57%; justify-content: flex-end; }
+body.one-line #slotA { top: 30%; justify-content: center; }
+body.one-line #slotB { display: none; }
+body.with-trans #slotA { top: 8%; }
+body.with-trans #slotB { top: 42%; }
+body.one-line.with-trans #slotA { top: 18%; }
+
+.line { position: relative; font-size: var(--fs); line-height: 1.35; white-space: pre; transform-origin: left center; }
+#slotB .line { transform-origin: right center; }
+body.one-line .line { transform-origin: center center; }
+.line > span { display: block; padding: 0 .12em; }
+/* 第一層：外框與陰影（OVL-7：用多方向 text-shadow，-webkit-text-stroke 在透明視窗畫不出來） */
+.line .ink { color: var(--outline); }
+body.outline .line .ink {
+  text-shadow:
+    var(--o) 0 var(--outline), calc(var(--o) * -1) 0 var(--outline), 0 var(--o) var(--outline), 0 calc(var(--o) * -1) var(--outline),
+    var(--o) var(--o) var(--outline), calc(var(--o) * -1) calc(var(--o) * -1) var(--outline),
+    var(--o) calc(var(--o) * -1) var(--outline), calc(var(--o) * -1) var(--o) var(--outline),
+    var(--drop, 0 0 transparent);
+}
+body:not(.outline) .line .ink { color: transparent; text-shadow: var(--drop, 0 0 transparent); }
+body.shadow { --drop: .1em .12em 0 rgba(13, 39, 71, .55); }
+/* 第二層：還沒唱的字；第三層：唱過的字（漸層）。只改 --px（OVL-12：不重排版） */
+.line .base, .line .fill { position: absolute; left: 0; top: 0; }
+.line .base { color: var(--unsung); clip-path: inset(-.5em -.5em -.5em var(--px, 0px)); }
+.line .fill {
+  color: transparent;
+  background: linear-gradient(180deg, var(--sung-from) 15%, var(--sung-to) 90%);
+  -webkit-background-clip: text; background-clip: text;
+  clip-path: inset(-.5em calc(100% - var(--px, 0px)) -.5em -.5em);
+}
+.line.next { opacity: .9; }
+.line.next .base { color: color-mix(in srgb, var(--unsung) 85%, #9fc3e6); }
+
+#trans, #roma { position: absolute; left: 4%; right: 4%; top: 78%; text-align: center; font-size: calc(var(--fs) * .4); color: #e8f4ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-shadow: .08em 0 var(--outline), -.08em 0 var(--outline), 0 .08em var(--outline), 0 -.08em var(--outline); }
+/* 羅馬拼音：用唱過的顏色，和翻譯分得出來；字母用一般字型比像素字好讀 */
+#roma { color: var(--sung-from); font-size: calc(var(--fs) * .5); font-family: "Segoe UI", system-ui, sans-serif; font-weight: 600; letter-spacing: .02em; }
+/* 拼音與翻譯都開：主字往上，拼音在上、翻譯在下 */
+body.with-both #slotA { top: 5%; }
+body.with-both #slotB { top: 37%; }
+body.one-line.with-both #slotA { top: 14%; }
+body.with-both #roma { top: 69%; }
+body.with-both #trans { top: 82%; }
+
+/* 前奏 / 間奏倒數（OVL-10） */
+#dots { position: absolute; font-size: calc(var(--fs) * .38); color: var(--sung-from); letter-spacing: .3em; line-height: 1;
+  text-shadow: .1em 0 var(--outline), -.1em 0 var(--outline), 0 .1em var(--outline), 0 -.1em var(--outline); }
+
+/* 歌曲提示（UI-7） */
+#toast { position: absolute; right: 4%; top: 3%; max-width: 70%; font-size: max(13px, calc(var(--fs) * .3)); color: var(--ink);
+  background: var(--sky-1); padding: .25em .7em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 -3px var(--ink), 0 3px var(--ink), -3px 0 var(--ink), 3px 0 var(--ink), 4px 6px 0 rgba(13,39,71,.45);
+  opacity: 0; transition: opacity .4s steps(4); }
+#toast.show { opacity: 1; }
+#toast.warn { background: #fff3c2; }
+
+/* ---------- 移動字幕模式（OVL-3） ---------- */
+#edit { display: none; position: absolute; inset: 6px; cursor: move;
+  background: rgba(29, 107, 176, .42);
+  outline: 4px dashed var(--sky-2); outline-offset: -4px; }
+body.edit #edit { display: block; }
+body.edit #lyrics { opacity: .8; }
+#edit .hint { position: absolute; left: 12px; top: 8px; font-size: 15px; color: var(--ink);
+  background: var(--sun); padding: 4px 12px; white-space: nowrap; pointer-events: none;
+  box-shadow: 0 -3px var(--ink), 0 3px var(--ink), -3px 0 var(--ink), 3px 0 var(--ink); }
+#edit .tools { position: absolute; right: 12px; top: 8px; display: flex; gap: 10px; }
+#edit button { font: 15px var(--pixel-font); color: var(--ink); background: var(--paper); border: 0; padding: 6px 12px; cursor: pointer;
+  box-shadow: 0 -3px var(--ink), 0 3px var(--ink), -3px 0 var(--ink), 3px 0 var(--ink), 3px 5px 0 rgba(13,39,71,.5); }
+#edit button:hover { background: var(--sky-1); }
+#edit button:active { transform: translate(2px, 2px); }
+#edit button.done { background: var(--mint); font-size: 17px; padding: 6px 18px; }
+#grip { position: absolute; right: -6px; bottom: -6px; width: 26px; height: 26px; cursor: nwse-resize;
+  background:
+    linear-gradient(var(--paper), var(--paper)) 18px 6px / 6px 18px no-repeat,
+    linear-gradient(var(--paper), var(--paper)) 6px 18px / 18px 6px no-repeat; }

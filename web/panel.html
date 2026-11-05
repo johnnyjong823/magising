@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>魔唱</title>
+<link rel="stylesheet" href="./shared/theme.css">
+<link rel="stylesheet" href="./panel/panel.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo px" data-icon="note"></div>
+    <div>
+      <h1>魔唱 <span class="en">MagiSing</span></h1>
+      <div class="sub">一邊用電腦，一邊跟著字幕唱</div>
+    </div>
+    <div class="chip px"><span class="led" id="led"></span><span id="chipText">等待播放</span></div>
+  </header>
+
+  <div class="banner px" id="banner">
+    <div data-icon="move" class="banner-icon"></div>
+    <div class="txt">現在可以用滑鼠<b>拖曳字幕</b>，右下角可以拉大小。擺好之後按「完成」。</div>
+    <button class="btn primary" id="bannerDone"><span data-icon="check"></span>完成</button>
+  </div>
+
+  <div class="hk-warn px" id="hkWarn"></div>
+
+  <nav class="tabs">
+    <button class="tab on" data-tab="now"><span data-icon="note"></span>正在播放</button>
+    <button class="tab" data-tab="style"><span data-icon="palette"></span>字幕樣式</button>
+    <button class="tab" data-tab="settings"><span data-icon="gear"></span>設定</button>
+    <button class="tab" data-tab="about"><span data-icon="info"></span>關於</button>
+  </nav>
+
+  <!-- ================= 正在播放 ================= -->
+  <main data-page="now">
+    <section class="card px" id="nowCard">
+      <div class="card-title">現在播放</div>
+      <div id="nowEmpty" class="empty">
+        <div class="empty-title">還沒有偵測到歌曲，怎麼開始：</div>
+        <ol>
+          <li>打開 <b>YT Music</b>（或 Spotify、Chrome 裡的 YouTube）播一首歌</li>
+          <li>字幕會自動出現在螢幕下方。想換位置就按下面的「移動字幕」</li>
+        </ol>
+      </div>
+      <div id="nowFull" hidden>
+        <div class="now">
+          <div class="cover px-in"><img id="cover" alt="" hidden><span data-icon="cassette" id="coverPh"></span></div>
+          <div class="now-text">
+            <span class="badge" id="srcBadge">—</span>
+            <div class="song" id="song">—</div>
+            <div class="artist" id="artist">—</div>
+            <div class="bar-row">
+              <div class="bar"><i id="barFill"></i></div>
+              <div class="time" id="time">0:00 / 0:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn big primary" id="moveBtn"><span data-icon="move"></span><span>移動字幕</span></button>
+        <button class="btn big" id="showBtn"><span data-icon="eyeoff"></span><span>隱藏字幕</span></button>
+        <div class="offset">
+          <button class="btn" id="offLater"><span data-icon="left"></span>延後</button>
+          <button class="val" id="offVal" title="按一下歸零">±0.00 秒</button>
+          <button class="btn" id="offEarlier">提早<span data-icon="right"></span></button>
+        </div>
+      </div>
+      <div class="hint">字幕跟歌對不上時：字幕<b>太快</b>按「延後」，字幕<b>太慢</b>按「提早」，每按一次 0.25 秒，會記住這首歌。按中間的數字歸零。</div>
+    </section>
+
+    <section class="card px" id="lyricCard">
+      <div class="card-title">歌詞</div>
+      <div class="lyric-state" id="lyricState"><span class="muted">還沒有歌曲</span></div>
+      <div class="row-btns">
+        <button class="btn sm" id="research"><span data-icon="refresh"></span>重新搜尋</button>
+        <button class="btn sm" id="showCands"><span data-icon="list"></span>換一份歌詞</button>
+        <button class="btn sm" id="pickLrc"><span data-icon="file"></span>用電腦裡的 .lrc 檔</button>
+        <button class="btn sm" id="forget" hidden><span data-icon="x"></span>取消手動綁定</button>
+      </div>
+      <div id="candBox" hidden>
+        <form class="url" id="searchForm">
+          <label class="input"><span data-icon="search"></span><input id="query" type="text" placeholder="自己輸入關鍵字，例如：歌名 歌手" autocomplete="off"></label>
+          <button class="btn primary" type="submit"><span data-icon="search"></span>搜尋</button>
+        </form>
+        <div class="cands" id="cands"></div>
+      </div>
+      <div class="hint">也可以直接把 <b>.lrc</b> 檔拖進這個視窗，綁定到現在這首歌。</div>
+      <div class="lyric-list px-in" id="lyricList"></div>
+      <div class="hint" id="lyricListHint">點某一行 =「這行現在正在唱」，會自動對好時間。</div>
+    </section>
+  </main>
+
+  <!-- ================= 字幕樣式 ================= -->
+  <main data-page="style" hidden>
+    <section class="card px">
+      <div class="card-title">位置與大小</div>
+      <div class="rows">
+        <label class="k">擺放位置</label>
+        <div class="seg">
+          <button class="btn sm" data-place="top"><span data-icon="up"></span>螢幕上方</button>
+          <button class="btn sm" data-place="center"><span data-icon="mid"></span>螢幕中間</button>
+          <button class="btn sm" data-place="bottom"><span data-icon="down"></span>螢幕下方</button>
+        </div>
+        <label class="k">字幕大小</label>
+        <div class="steps">
+          <button class="btn sm" id="sizeDown" title="縮小"><span data-icon="minus"></span></button>
+          <div class="blocks" id="blocks"></div>
+          <button class="btn sm" id="sizeUp" title="放大"><span data-icon="plus"></span></button>
+        </div>
+      </div>
+    </section>
+    <section class="card px">
+      <div class="card-title">字的樣子</div>
+      <div class="rows">
+        <label class="k">字型</label>
+        <div class="seg" id="fontSeg">
+          <button class="btn sm" data-font="pixel">像素字</button>
+          <button class="btn sm" data-font="normal" style="font-family:'Microsoft JhengHei';font-weight:700">一般粗體</button>
+        </div>
+        <label class="k">行數</label>
+        <div class="seg" id="linesSeg">
+          <button class="btn sm" data-lines="2">兩行交替</button>
+          <button class="btn sm" data-lines="1">只顯示一行</button>
+        </div>
+        <label class="k">唱過的顏色</label>
+        <div class="seg" id="sungSw"></div>
+        <label class="k">還沒唱的顏色</label>
+        <div class="seg" id="unsungSw"></div>
+        <label class="k">外框</label>
+        <div class="seg">
+          <button class="btn sm" id="outlineBtn">外框</button>
+          <button class="btn sm" id="shadowBtn">陰影</button>
+        </div>
+        <label class="k">不透明度</label>
+        <div class="steps"><div class="blocks" id="opacityBlocks"></div><span class="muted" id="opacityVal"></span></div>
+        <label class="k">翻譯 / 拼音</label>
+        <div class="seg"><button class="btn sm" id="transBtn">顯示翻譯行</button><button class="btn sm" id="romaBtn">顯示羅馬拼音</button><span class="muted small">歌詞來源有提供時才會出現（日文歌大多有）</span></div>
+      </div>
+      <div class="hint">在這一頁時，字幕會顯示預覽字，改設定馬上就看得到。</div>
+    </section>
+  </main>
+
+  <!-- ================= 設定 ================= -->
+  <main data-page="settings" hidden>
+    <section class="card px">
+      <div class="card-title">時間</div>
+      <div class="rows">
+        <label class="k">全部歌曲偏移</label>
+        <div class="offset left">
+          <button class="btn sm" id="gLater"><span data-icon="left"></span>延後</button>
+          <button class="val" id="gVal" title="按一下歸零">±0.00 秒</button>
+          <button class="btn sm" id="gEarlier">提早<span data-icon="right"></span></button>
+        </div>
+      </div>
+      <div class="hint">戴藍牙耳機時聲音會慢一點，字幕就會顯得太快 → 按「延後」補回來。這裡每按一次 0.05 秒，對所有歌曲都有效。</div>
+    </section>
+    <section class="card px">
+      <div class="card-title">歌詞</div>
+      <div class="rows">
+        <label class="k">簡體轉繁體</label>
+        <div class="seg"><button class="btn sm" id="s2tBtn">簡體歌詞自動轉繁體</button></div>
+        <label class="k">歌詞來源</label>
+        <div class="seg">
+          <button class="btn sm" data-prov="netease">網易雲音樂（華語多、有逐字）</button>
+          <button class="btn sm" data-prov="kugou">酷狗音樂（日文多、有逐字）</button>
+          <button class="btn sm" data-prov="lrclib">LRCLIB（英文多）</button>
+        </div>
+        <label class="k">本機 LRC</label>
+        <div class="seg">
+          <button class="btn sm" id="lrcDirPick"><span data-icon="folder"></span>選擇資料夾</button>
+          <button class="btn sm" id="lrcDirClear" hidden><span data-icon="x"></span>不用了</button>
+          <span class="path" id="lrcDirText">（沒有設定）</span>
+        </div>
+      </div>
+      <div class="hint">華語歌先查網易雲、日文歌（歌名或歌手有假名）先查酷狗、英文歌先查 LRCLIB。本機資料夾裡檔名是「歌手 - 歌名.lrc」的歌詞會最先使用。三個網路來源都關掉的話，只會用本機 LRC，不會連網查歌詞。</div>
+    </section>
+    <section class="card px">
+      <div class="card-title">快捷鍵</div>
+      <div class="hk-table" id="hkTable"></div>
+      <div class="hint">按「改」之後直接按下新的組合鍵（要含 Ctrl / Alt / Shift 其中之一），按 Esc 取消。避開 Ctrl+Alt+方向鍵（有些顯示卡拿來轉螢幕）。</div>
+    </section>
+    <section class="card px">
+      <div class="card-title">其他</div>
+      <div class="rows">
+        <label class="k">開機啟動</label>
+        <div class="seg"><button class="btn sm" id="autostartBtn">開機時自動啟動（縮在系統匣）</button></div>
+        <label class="k">資料</label>
+        <div class="seg"><button class="btn sm" id="openData"><span data-icon="folder"></span>開啟資料夾</button><span class="path" id="dataPath"></span></div>
+      </div>
+      <div class="hint">歌詞快取、偏移、設定都存在這個資料夾，只在這台電腦上。</div>
+    </section>
+  </main>
+
+  <!-- ================= 關於 ================= -->
+  <main data-page="about" hidden>
+    <section class="card px">
+      <div class="card-title">魔唱 MagiSing</div>
+      <div class="about-head">
+        <div class="logo px" data-icon="note"></div>
+        <div>
+          <div class="about-name">魔唱 <span class="en">MagiSing</span> <span class="badge" id="aboutVer">v—</span></div>
+          <div class="muted small">© 2026 Johnny。開源免費軟體（GPL-3.0），沒有廣告、不收費。</div>
+        </div>
+      </div>
+      <div class="row-btns">
+        <button class="btn sm" id="openGithub" data-link="github"><span data-icon="file"></span>原始碼（GitHub）</button>
+        <button class="btn sm" id="openLicense"><span data-icon="file"></span>完整使用條款</button>
+        <button class="btn sm" id="openNotices"><span data-icon="list"></span>開源元件授權</button>
+      </div>
+    </section>
+    <section class="card px" data-link="donate">
+      <div class="card-title">贊助開發者</div>
+      <div class="donate-row">
+        <div class="donate-icon" data-icon="cup"></div>
+        <div class="donate-txt">魔唱完全免費，也不會有廣告。如果它陪你唱得開心，歡迎斗內請開發者喝杯飲料，支持之後繼續更新！</div>
+        <button class="btn primary" id="donateBtn"><span data-icon="heart"></span>斗內支持</button>
+      </div>
+      <div class="hint">斗內完全自由，不影響任何功能。付款透過綠界科技處理，魔唱不會經手你的付款資料。</div>
+    </section>
+    <section class="card px">
+      <div class="card-title">使用聲明</div>
+      <ul class="about-list">
+        <li>魔唱是個人開發的<b>非官方</b>工具，和網易雲音樂、酷狗音樂、LRCLIB、YouTube Music、Spotify 等服務沒有任何關係；提到的名稱與商標屬於各自的所有者。</li>
+        <li>魔唱本身不提供歌詞。歌詞從第三方服務查詢，<b>著作權屬於原詞曲作者與權利人</b>，只快取在這台電腦供個人練唱，請不要公開散布。</li>
+        <li>歌詞服務由第三方提供，隨時可能變更或停止，部分功能可能因此無法使用。</li>
+        <li>本軟體依「現況」提供，不提供任何保證；作者不對使用本軟體造成的損害負責。</li>
+      </ul>
+    </section>
+    <section class="card px">
+      <div class="card-title">隱私</div>
+      <ul class="about-list">
+        <li>不用註冊帳號，沒有廣告，也不追蹤你的使用行為。</li>
+        <li>找歌詞時，會把<b>正在播放的歌名、歌手與歌曲長度</b>（LRCLIB 另含專輯名稱），以及<b>你手動搜尋時輸入的關鍵字</b>，送給網易雲音樂、酷狗音樂、LRCLIB。可以在「設定 → 歌詞來源」關掉任何一個或全部（全部關掉就只用本機 LRC 檔，不會連網）。酷狗的歌曲搜尋是未加密的 HTTP 連線。</li>
+        <li>從 Windows 媒體控制讀到的歌曲資訊與封面只用來顯示字幕，不會傳出去。</li>
+        <li>設定、歌詞快取與紀錄檔只存在這台電腦的資料夾（「設定 → 其他 → 資料」），不會上傳。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <span data-icon="warn" class="foot-icon"></span>
+    <span>關掉這個視窗不會結束程式，字幕會繼續顯示。要結束請在右下角系統匣的圖示按右鍵 →「結束魔唱」。</span>
+  </footer>
+  <div class="promo-row">
+    <button class="promo px" id="promo" title="https://johnnyx9487.bdcweb.org/">
+      <span data-icon="note" class="promo-icon"></span>
+      <span class="promo-txt">歡迎大家找我做<b>軟體、網頁或系統</b></span>
+      <span class="promo-url">johnnyx9487.bdcweb.org<span data-icon="right"></span></span>
+    </button>
+    <button class="btn primary donate-mini" id="donateMini" data-link="donate"><span data-icon="heart"></span>斗內支持</button>
+  </div>
+</div>
+<div class="tip px" id="tip"></div>
+<div class="drop" id="drop"><div class="px">放開滑鼠，把歌詞綁定到現在這首歌</div></div>
+<script type="module" src="./panel/main.ts"></script>
+</body>
+</html>

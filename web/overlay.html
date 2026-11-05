@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>魔唱 字幕</title>
+<link rel="stylesheet" href="./shared/theme.css">
+<link rel="stylesheet" href="./overlay/overlay.css">
+</head>
+<body>
+<div id="lyrics">
+  <div id="dots"></div>
+  <div id="slotA" class="slot"></div>
+  <div id="slotB" class="slot"></div>
+  <div id="roma"></div>
+  <div id="trans"></div>
+</div>
+<div id="toast"></div>
+<div id="edit">
+  <div class="hint">按住拖曳移動字幕 · 右下角拉大小</div>
+  <div class="tools">
+    <button data-place="top">▲ 上方</button>
+    <button data-place="center">■ 中間</button>
+    <button data-place="bottom">▼ 下方</button>
+    <button class="done" id="done">✔ 完成</button>
+  </div>
+  <div id="grip" title="拖曳調整大小"></div>
+</div>
+<script type="module" src="./overlay/main.ts"></script>
+</body>
+</html>

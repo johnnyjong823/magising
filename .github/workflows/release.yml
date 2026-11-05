@@ -1,0 +1,58 @@
+# 建置 Windows 安裝檔。
+# - 推送 v* 標籤（例如 git tag v0.4.0 && git push origin v0.4.0）→ 建置並建立 Release 草稿，確認後到 GitHub 按「Publish」
+# - 手動執行（Actions → Release → Run workflow）→ 只建置，安裝檔放在這次執行的 Artifacts
+# 之後通過 SignPath Foundation 審核，會在上傳 artifact 之後加上送簽與等待核准的步驟。
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      DIST_DIR: ${{ github.workspace }}/dist
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: 安裝套件
+        run: npm ci
+
+      - name: 型別檢查與單元測試
+        run: |
+          npm run check
+          npm test
+
+      - name: 建置安裝檔
+        run: npm run build:win
+
+      - name: 上傳安裝檔（Artifacts）
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagiSing-windows
+          path: dist/*.exe
+          if-no-files-found: error
+
+      - name: 建立 Release 草稿
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.exe --draft --title "魔唱 MagiSing $GITHUB_REF_NAME" --generate-notes

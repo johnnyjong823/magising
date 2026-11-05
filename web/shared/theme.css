@@ -1,0 +1,24 @@
+/* 魔唱：淺藍像素風共用樣式 */
+@font-face {
+  font-family: "Cubic11";
+  src: url("fonts/Cubic_11.woff2") format("woff2");
+  font-display: block;
+}
+:root {
+  --sky-0: #eef8ff;
+  --sky-1: #d9f0ff;
+  --sky-2: #a9dcff;
+  --sky-3: #62bdf6;
+  --sky-4: #2f8fd8;
+  --sky-5: #1d6bb0;
+  --ink: #173a5e;
+  --ink-2: #4d6f90;
+  --ink-3: #8fb0cc;
+  --paper: #ffffff;
+  --sun: #ffd84d;
+  --pink: #ff8fb1;
+  --mint: #4fd1a0;
+  --shadow: rgba(23, 58, 94, 0.22);
+  --px: 3px;                      /* 一個「像素」的大小 */
+  --pixel-font: "Cubic11", "Microsoft JhengHei", sans-serif;
+}
