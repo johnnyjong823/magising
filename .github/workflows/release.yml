@@ -55,4 +55,23 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/*.exe --draft --title "魔唱 MagiSing $GITHUB_REF_NAME" --generate-notes
+        # 說明開頭放下載方式與 Code signing policy（SignPath 規定 Release 頁要有），後面接自動產生的變更清單
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          cat > notes.md <<EOF
+          ## 下載
+
+          下載下方的 **\`MagiSing_Setup_${VER}.exe\`** 執行即可。安裝到使用者資料夾，不需要管理員權限。
+
+          - 系統需求：Windows 10 21H2 以上或 Windows 11
+          - 介紹與安裝說明：https://johnnyjong823.github.io/magising/
+          - 目前安裝檔還沒有程式碼簽章，Windows 可能跳出「Windows 已保護您的電腦」：按「**其他資訊 → 仍要執行**」。
+
+          ## Code signing policy
+
+          Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/)（申請中，通過後的版本才會有簽章）。
+
+          完整的簽章政策、團隊角色與隱私政策見 [README 的 Code signing policy](https://github.com/johnnyjong823/magising#code-signing-policy)。
+
+          EOF
+          gh release create "$GITHUB_REF_NAME" dist/*.exe --draft --title "魔唱 MagiSing $GITHUB_REF_NAME" --notes-file notes.md --generate-notes
