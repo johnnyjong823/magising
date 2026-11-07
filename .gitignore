@@ -10,7 +10,6 @@ data/
 # 下載頁：部署時才從程式檔案複製（見 .github/workflows/pages.yml）
 site/icon.svg
 site/og.png
-site/fonts/
 
 # oh-my-claudecode 的本機工作狀態
 .omc/

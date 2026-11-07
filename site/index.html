@@ -9,293 +9,404 @@
 <meta property="og:title" content="魔唱 MagiSing｜一邊用電腦，一邊跟著字幕唱">
 <meta property="og:description" content="播歌時自動顯示 KTV 逐字字幕的 Windows 小工具。免費、開源、沒有廣告。">
 <meta property="og:image" content="https://johnnyjong823.github.io/magising/og.png">
-<meta name="theme-color" content="#2f8fd8">
+<meta name="theme-color" content="#000000">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
-@font-face { font-family: "Cubic11"; src: url("fonts/Cubic_11.woff2") format("woff2"); font-display: swap; }
 :root {
-  --bg: #eef8ff;
-  --bg-2: #d9f0ff;
-  --card: #ffffff;
-  --line: #a9dcff;
-  --ink: #173a5e;
-  --ink-2: #4d6f90;
-  --accent: #2f8fd8;
-  --accent-ink: #ffffff;
-  --accent-2: #1d6bb0;
+  --blue: #1e6ef3;
+  --blue-1: #4588f6;
+  --blue-2: #2f79f4;
+  --blue-3: #1a5fd6;
+  --ink: #0a0d12;
+  --grey: #6a7681;
+  --grey-2: #9aa3ab;
+  --line: #e2e5e9;
+  --paper: #ffffff;
+  --mist: #f4f5f7;
   --sun: #ffd84d;
-  --shadow: rgba(23, 58, 94, .18);
-  --pixel: "Cubic11", "Microsoft JhengHei", "PingFang TC", sans-serif;
-  --body: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+  --font: "Inter Tight", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+  --pad: clamp(16px, 4.5vw, 64px);
+  --max: 1280px;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1b2c; --bg-2: #13263d; --card: #172d47; --line: #26486d;
-    --ink: #e4f1ff; --ink-2: #9dbad6; --accent: #4aa8ef; --accent-ink: #06182b; --accent-2: #7cc3ff;
-    --shadow: rgba(0, 0, 0, .4); color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0e1b2c; --bg-2: #13263d; --card: #172d47; --line: #26486d;
-  --ink: #e4f1ff; --ink-2: #9dbad6; --accent: #4aa8ef; --accent-ink: #06182b; --accent-2: #7cc3ff;
-  --shadow: rgba(0, 0, 0, .4); color-scheme: dark;
-}
-
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.7; -webkit-font-smoothing: antialiased; }
-a { color: var(--accent-2); }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-h1, h2, h3 { font-family: var(--pixel); font-weight: normal; line-height: 1.3; margin: 0; }
-h2 { font-size: clamp(24px, 4vw, 32px); margin-bottom: 8px; }
-.lead { color: var(--ink-2); margin: 0 0 28px; }
-section { padding: 72px 0; }
-section.alt { background: var(--bg-2); }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+h1, h2, h3 { margin: 0; font-weight: 900; letter-spacing: -.02em; line-height: 1.12; }
+.eyebrow { display: block; color: var(--blue); font-weight: 700; font-size: 15px; margin-bottom: 14px; }
+.h-xl { font-size: clamp(34px, 5.6vw, 72px); }
+.lead { color: var(--grey); font-size: clamp(16px, 1.5vw, 19px); max-width: 640px; margin: 20px 0 0; }
 
-/* ---------- 頂端 ---------- */
-header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-header.top .wrap { display: flex; align-items: center; gap: 12px; height: 56px; }
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--pixel); font-size: 20px; color: var(--ink); text-decoration: none; }
-.brand img { width: 30px; height: 30px; }
-header nav { margin-left: auto; display: flex; gap: 18px; font-size: 15px; }
-header nav a { color: var(--ink-2); text-decoration: none; }
-header nav a:hover { color: var(--accent-2); }
-@media (max-width: 640px) { header nav a.opt { display: none; } }
+/* ---------- 按鈕 ---------- */
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 4px; font-weight: 700; font-size: 16px; text-decoration: none; transition: background .2s, transform .2s, color .2s; white-space: nowrap; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-blue:hover { background: var(--blue-3); }
+.btn-white { background: #fff; color: var(--blue); }
+.btn-white:hover { background: var(--ink); color: #fff; }
+.btn-grey { background: #e2e5e9; color: var(--ink); }
+.btn-grey:hover { background: #d3d7dc; }
+.link { color: var(--blue); font-weight: 600; text-underline-offset: 4px; }
+.btns { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 30px; }
+
+/* ---------- 導覽列 ---------- */
+.nav { position: sticky; top: 0; z-index: 20; background: #000; color: #fff; }
+.nav .wrap { display: flex; align-items: center; height: 64px; gap: 24px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -.01em; }
+.logo img { width: 28px; height: 28px; }
+.logo span { color: #8b96a1; font-weight: 600; }
+.nav nav { display: flex; gap: 30px; margin: 0 auto; font-size: 15px; }
+.nav nav a { text-decoration: none; color: #d7dce1; transition: color .2s; }
+.nav nav a:hover { color: #fff; }
+.nav .btn { padding: 9px 16px; font-size: 14px; }
+@media (max-width: 760px) { .nav nav { display: none; } .nav .btn { margin-left: auto; } .logo span { display: none; } }
 
 /* ---------- 主視覺 ---------- */
-.hero { padding: 64px 0 56px; background: linear-gradient(180deg, var(--bg-2), var(--bg)); }
-.hero .wrap { display: grid; grid-template-columns: 1fr 1.15fr; gap: 48px; align-items: center; }
-@media (max-width: 860px) { .hero .wrap { grid-template-columns: 1fr; gap: 36px; } }
-.hero h1 { font-size: clamp(40px, 7vw, 60px); display: flex; align-items: center; gap: 14px; }
-.hero h1 img { width: 1.1em; height: 1.1em; }
-.hero h1 small { display: block; font-size: .42em; color: var(--ink-2); letter-spacing: .04em; }
-.tagline { font-family: var(--pixel); font-size: clamp(20px, 3vw, 24px); margin: 18px 0 10px; }
-.hero p.desc { color: var(--ink-2); margin: 0 0 26px; }
-.dl { display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); text-decoration: none; font-family: var(--pixel); font-size: 22px; box-shadow: 0 4px 0 var(--accent-2), 0 10px 24px var(--shadow); transition: transform .1s, box-shadow .1s; }
-.dl:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--accent-2), 0 14px 28px var(--shadow); }
-.dl:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--accent-2), 0 4px 10px var(--shadow); }
-.dl svg { width: 24px; height: 24px; flex: none; }
-.dl-meta { margin: 12px 0 0; font-size: 14px; color: var(--ink-2); }
-.badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; padding: 0; list-style: none; }
-.badges li { font-size: 13px; padding: 3px 11px; border-radius: 99px; background: var(--card); border: 1px solid var(--line); color: var(--ink-2); }
+.hero { position: relative; background: var(--blue); color: #fff; overflow: hidden; text-align: center; }
+.hero::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size: 40px 40px; -webkit-mask-image: linear-gradient(#000 30%, transparent 85%); mask-image: linear-gradient(#000 30%, transparent 85%); }
+.hero .wrap { position: relative; padding-top: clamp(64px, 10vw, 130px); }
+.hero h1 { font-size: clamp(40px, 8vw, 108px); letter-spacing: -.035em; line-height: 1.06; }
+.hero .sub { font-size: clamp(17px, 2.2vw, 26px); color: rgba(255,255,255,.78); margin: 22px auto 0; max-width: 760px; font-weight: 500; letter-spacing: -.01em; }
+.hero .btns { justify-content: center; }
+.hero .meta { margin: 16px 0 0; font-size: 14px; color: rgba(255,255,255,.72); }
+.hero .ghost { color: #fff; font-weight: 600; text-underline-offset: 4px; }
+.stage { position: relative; max-width: 980px; margin: clamp(48px, 7vw, 84px) auto 0; }
+.stage .panel { width: 74%; margin: 0 auto; border-radius: 10px 10px 0 0; box-shadow: 0 30px 80px rgba(0, 20, 70, .45); border: 1px solid rgba(255,255,255,.25); border-bottom: 0; aspect-ratio: 1770 / 1100; object-fit: cover; object-position: top; }
+.stage .lyrics { position: absolute; left: 50%; bottom: 9%; width: 108%; max-width: none; transform: translateX(-50%); filter: drop-shadow(0 6px 18px rgba(0, 20, 70, .35)); animation: float 6s ease-in-out infinite; }
+@keyframes float { 50% { transform: translate(-50%, -8px); } }
+.stage figcaption { position: absolute; right: 0; top: -30px; font-size: 12px; color: rgba(255,255,255,.6); }
+@media (max-width: 760px) { .stage .panel { width: 100%; } .stage .lyrics { width: 100%; bottom: 6%; } .stage figcaption { display: none; } .hero .sub br { display: none; } }
 
-/* ---------- 字幕示範 ---------- */
-.screen { position: relative; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px var(--shadow); border: 1px solid var(--line);
-  background: radial-gradient(120% 90% at 20% 10%, #4a7fc4 0%, #23426e 45%, #121f38 100%); }
-.screen .win { position: absolute; left: 6%; top: 9%; width: 58%; height: 56%; border-radius: 8px; background: rgba(255,255,255,.92); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
-.screen .win::before { content: ""; display: block; height: 14%; border-radius: 8px 8px 0 0; background: #dfe8f2; }
-.screen .win i { display: block; height: 7%; margin: 6% 8% 0; border-radius: 4px; background: #dfe8f2; }
-.screen .win i:nth-child(2) { width: 60%; }
-.screen .win i:nth-child(3) { width: 72%; }
-.screen .player { position: absolute; right: 5%; top: 14%; width: 30%; padding: 3% 3.2%; border-radius: 8px; background: #1b1b22; color: #fff; font-size: clamp(9px, 1.4vw, 12px); line-height: 1.4; box-shadow: 0 8px 20px rgba(0,0,0,.35); }
-.player .cover { aspect-ratio: 1; border-radius: 4px; margin-bottom: 8%; background: linear-gradient(135deg, #ff8fb1, #b98cff 55%, #62d0ff); }
-.player b { display: block; font-weight: 600; }
-.player span { opacity: .6; }
-.player .bar { height: 3px; margin-top: 8%; border-radius: 2px; background: rgba(255,255,255,.2); overflow: hidden; }
-.player .bar u { display: block; height: 100%; width: 0; background: #fff; }
-.lyrics { position: absolute; inset: auto 0 0 0; height: 40%; font-family: var(--pixel); font-size: clamp(17px, 3.4vw, 30px); pointer-events: none; }
-.slot { position: absolute; left: 4%; right: 4%; display: flex; }
-.slot.a { top: 6%; justify-content: flex-start; }
-.slot.b { top: 50%; justify-content: flex-end; }
-.ln { position: relative; white-space: pre; line-height: 1.35; --p: 0px; }
-.ln > span { display: block; padding: 0 .12em; }
-.ln .ink { color: #0d2747; text-shadow: .06em 0 #0d2747, -.06em 0 #0d2747, 0 .06em #0d2747, 0 -.06em #0d2747, .06em .06em #0d2747, -.06em -.06em #0d2747, .06em -.06em #0d2747, -.06em .06em #0d2747, .1em .12em 0 rgba(13,39,71,.55); }
-.ln .base, .ln .fill { position: absolute; left: 0; top: 0; }
-.ln .base { color: #fff; clip-path: inset(-.5em -.5em -.5em var(--p)); }
-.ln .fill { color: transparent; background: linear-gradient(180deg, #62d0ff 15%, #b98cff 90%); -webkit-background-clip: text; background-clip: text; clip-path: inset(-.5em calc(100% - var(--p)) -.5em -.5em); }
-.ln.next .base { color: #e2eefa; }
-.screen-cap { margin: 12px 0 0; font-size: 13px; color: var(--ink-2); text-align: center; }
+/* ---------- 數字列 ---------- */
+.stats { padding: clamp(56px, 8vw, 100px) 0; }
+.stats .wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+@media (max-width: 860px) { .stats .wrap { grid-template-columns: repeat(2, 1fr); gap: 40px 24px; } }
+.stat { border-top: 2px solid var(--ink); padding-top: 18px; }
+.stat b { display: block; font-size: clamp(40px, 5vw, 64px); font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--blue); }
+.stat span { display: block; margin-top: 12px; font-weight: 700; font-size: 16px; }
+.stat small { display: block; color: var(--grey); font-size: 14px; margin-top: 2px; }
 
 /* ---------- 功能 ---------- */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
-.card h3 { font-size: 19px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-.card h3 .dot { width: 10px; height: 10px; background: var(--accent); flex: none; }
-.card p { margin: 0; color: var(--ink-2); font-size: 15px; }
-.apps { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
-.apps li { padding: 6px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 15px; }
-.apps-note { font-size: 14px; color: var(--ink-2); margin: 10px 0 0; }
+.features { padding: 0 0 clamp(64px, 9vw, 120px); }
+.features .wrap > .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 860px) { .features .wrap > .cols { grid-template-columns: 1fr; gap: 56px; } }
+.shot { position: relative; background: var(--blue); overflow: hidden; aspect-ratio: 16 / 10; }
+.shot::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.18) 1.2px, transparent 1.4px); background-size: 14px 14px; }
+.shot img { position: absolute; left: 9%; top: 11%; width: 82%; border-radius: 6px 6px 0 0; box-shadow: 0 20px 50px rgba(0, 20, 70, .4); transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.col:hover .shot img { transform: translateY(-10px); }
+.col h3 { font-size: clamp(30px, 3.4vw, 44px); color: var(--grey); margin: 30px 0 12px; letter-spacing: -.03em; }
+.col > p { color: var(--grey); margin: 0 0 26px; font-size: 17px; max-width: 560px; }
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.rows li { display: flex; align-items: center; gap: 16px; border: 1px solid var(--line); padding: 18px 20px; font-weight: 700; font-size: 15.5px; line-height: 1.5; transition: border-color .2s; }
+.rows li:hover { border-color: var(--blue); }
+.rows svg { width: 22px; height: 22px; flex: none; color: var(--blue); }
 
-/* ---------- 安裝步驟 ---------- */
-.steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; padding: 0; margin: 0; list-style: none; }
-.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px 20px; position: relative; }
-.steps li::before { content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 10px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-family: var(--pixel); font-size: 18px; }
-.steps b { display: block; font-size: 17px; margin-bottom: 4px; }
-.steps p { margin: 0; color: var(--ink-2); font-size: 15px; }
-.warn { margin-top: 20px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--sun); border-radius: 14px; padding: 20px 22px; }
-@media (max-width: 640px) { .warn { grid-template-columns: 1fr; } }
-.warn p { margin: 0 0 6px; }
-.warn p:last-child { margin: 0; color: var(--ink-2); font-size: 14px; }
-.ss { width: 230px; max-width: 100%; border-radius: 4px; background: #1f5fa8; color: #fff; padding: 14px 16px 12px; font-family: "Segoe UI", var(--body); font-size: 12px; line-height: 1.45; }
-.ss strong { display: block; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-.ss u { color: #fff; text-decoration: underline; outline: 2px solid var(--sun); outline-offset: 2px; }
-.ss .btns { display: flex; justify-content: flex-end; gap: 6px; margin-top: 12px; }
-.ss .btns span { border: 1px solid #fff; padding: 3px 10px; }
-.ss .btns span.hl { outline: 2px solid var(--sun); outline-offset: 2px; }
-.req { margin: 20px 0 0; font-size: 14px; color: var(--ink-2); }
+/* ---------- 播放器跑馬燈 ---------- */
+.players { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; padding: 26px 0; }
+.players .label { text-align: center; color: var(--grey); font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.track { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+.track span { font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -.03em; padding: 0 .7em; white-space: nowrap; color: var(--ink); }
+.track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.2px var(--grey-2); }
+@keyframes marquee { to { transform: translateX(-50%); } }
 
-/* ---------- 快捷鍵 ---------- */
-.keys { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.keys td { padding: 11px 18px; border-top: 1px solid var(--line); font-size: 15px; }
-.keys tr:first-child td { border-top: 0; }
-.keys td:first-child { white-space: nowrap; width: 1%; }
-kbd { font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; padding: 2px 7px; border-radius: 5px; background: var(--bg-2); border: 1px solid var(--line); border-bottom-width: 2px; }
-.keys-note { font-size: 14px; color: var(--ink-2); margin: 12px 0 0; }
+/* ---------- 安裝 ---------- */
+.install { padding-top: clamp(72px, 10vw, 130px); }
+.layers { margin-top: clamp(72px, 9vw, 110px); }
+.layer { --c: var(--blue-1); position: relative; background: var(--c); color: #fff; }
+.layer:nth-child(2) { --c: var(--blue-2); }
+.layer:nth-child(3) { --c: var(--blue-3); }
+.layer .inner { max-width: var(--max); margin: 0 auto; padding: 34px var(--pad) 70px; display: grid; grid-template-columns: 1fr auto; gap: 24px 48px; align-items: center; }
+.layer .inner p { margin: 0; max-width: 620px; font-size: 16.5px; color: rgba(255,255,255,.9); }
+.layer .inner p b { color: #fff; }
+.tab { position: absolute; bottom: 100%; left: calc(var(--pad) + 2%); height: 54px; padding: 0 34px; display: flex; align-items: center; gap: 12px; background: var(--c); border-radius: 20px 20px 0 0; font-weight: 800; font-size: clamp(18px, 2vw, 23px); letter-spacing: -.02em; white-space: nowrap; }
+.tab::before, .tab::after { content: ""; position: absolute; bottom: 0; width: 20px; height: 20px; }
+.tab::before { right: 100%; background: radial-gradient(circle at 0 0, transparent 19.5px, var(--c) 20px); }
+.tab::after { left: 100%; background: radial-gradient(circle at 100% 0, transparent 19.5px, var(--c) 20px); }
+.tab em { font-style: normal; font-feature-settings: "tnum"; opacity: .8; }
+@media (min-width: 900px) { .layer:nth-child(2) .tab { left: 46%; } }
+.ss { width: 250px; background: #fff; color: #1b1b1b; border-radius: 6px; padding: 16px 18px 14px; font-family: "Segoe UI", var(--font); font-size: 12.5px; line-height: 1.45; box-shadow: 0 16px 40px rgba(0, 20, 70, .35); }
+.ss strong { display: block; font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #0b3d91; }
+.ss u { outline: 2px solid var(--sun); outline-offset: 2px; text-decoration-color: #0b3d91; color: #0b3d91; }
+.ss .b { display: flex; justify-content: flex-end; gap: 6px; margin-top: 14px; }
+.ss .b span { border: 1px solid #8a8a8a; padding: 4px 12px; border-radius: 3px; }
+.ss .b span:first-child { outline: 2px solid var(--sun); outline-offset: 2px; background: #e8f0fe; }
+@media (max-width: 760px) { .layer .inner { grid-template-columns: 1fr; } .tab { padding: 0 22px; height: 48px; } }
 
 /* ---------- 隱私 ---------- */
-.privacy { margin: 0; padding-left: 1.2em; }
-.privacy li { margin-bottom: 8px; }
+.band { position: relative; background: #000; color: #fff; overflow: hidden; }
+.band::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(#5b6670 1.3px, transparent 1.6px); background-size: 9px 9px;
+  -webkit-mask-image: radial-gradient(70% 120% at 85% 50%, #000 0%, transparent 70%); mask-image: radial-gradient(70% 120% at 85% 50%, #000 0%, transparent 70%); }
+.band .wrap { position: relative; padding-top: clamp(110px, 14vw, 190px); padding-bottom: clamp(36px, 5vw, 56px); }
+.band .eyebrow { color: #fff; font-weight: 600; }
+.band h2 { font-size: clamp(38px, 6.4vw, 84px); letter-spacing: -.035em; }
+.spec-wrap { background: var(--mist); padding: clamp(56px, 8vw, 100px) 0; }
+.spec-wrap .wrap { max-width: 900px; }
+.spec-wrap .intro { color: var(--grey); font-size: 17px; margin: 0 0 40px; }
+.spec { background: #fff; padding: 6px; border-radius: 6px; display: grid; gap: 6px; }
+.spec > div { display: flex; justify-content: space-between; align-items: center; gap: 20px; border: 1px solid var(--line); padding: 16px 20px; }
+.spec dt { color: var(--grey); font-size: 15px; }
+.spec dd { margin: 0; font-weight: 700; text-align: right; font-size: 15.5px; }
+.spec-note { color: var(--grey); font-size: 14px; margin: 18px 0 0; }
+.center { text-align: center; }
 
-/* ---------- 斗內／頁尾 ---------- */
-.cta { text-align: center; }
-.cta .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 22px; }
-.btn2 { display: inline-block; padding: 10px 22px; border-radius: 12px; border: 2px solid var(--accent); color: var(--accent-2); text-decoration: none; font-weight: 600; }
-.btn2:hover { background: var(--accent); color: var(--accent-ink); }
-footer { padding: 40px 0 56px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
-footer p { margin: 0 0 10px; }
-footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 18px; }
+/* ---------- 快捷鍵 ---------- */
+.keys { padding: clamp(72px, 10vw, 130px) 0; }
+.keys .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
+@media (max-width: 860px) { .keys .grid { grid-template-columns: 1fr; } }
+.keys .spec { background: var(--mist); }
+.keys .spec > div { background: #fff; }
+.keys dd { white-space: nowrap; }
+kbd { display: inline-block; font-family: "Inter Tight", var(--font); font-weight: 700; font-size: 13px; min-width: 26px; text-align: center; padding: 3px 7px; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 4px; background: #fff; }
 
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .dl { transition: none; } }
+/* ---------- 結尾 ---------- */
+.cta { background: var(--blue); color: #fff; text-align: center; overflow: hidden; position: relative; }
+.cta .wrap { position: relative; padding-top: clamp(80px, 11vw, 140px); padding-bottom: clamp(60px, 8vw, 100px); }
+.cta h2 { font-size: clamp(38px, 6.4vw, 84px); letter-spacing: -.035em; }
+.cta p { color: rgba(255,255,255,.8); font-size: 18px; margin: 20px auto 0; max-width: 560px; }
+.cta .btns { justify-content: center; }
+.cta .ghost { color: #fff; font-weight: 600; text-underline-offset: 4px; }
+.cta img { width: min(820px, 110%); margin: clamp(48px, 7vw, 80px) auto 0; filter: drop-shadow(0 6px 18px rgba(0, 20, 70, .35)); }
+
+footer { background: #000; color: #9aa3ab; font-size: 14px; }
+footer .wrap { padding-top: 64px; padding-bottom: 48px; }
+footer .cols { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
+@media (max-width: 760px) { footer .cols { grid-template-columns: 1fr 1fr; } footer .cols > :first-child { grid-column: 1 / -1; } }
+footer h4 { color: #fff; font-size: 14px; margin: 0 0 14px; font-weight: 700; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+footer a { color: #c9cfd5; text-decoration: none; }
+footer a:hover { color: #fff; }
+footer .logo { color: #fff; margin-bottom: 14px; }
+footer .legal { border-top: 1px solid #22272d; margin-top: 48px; padding-top: 24px; font-size: 12.5px; line-height: 1.8; color: #78828c; }
+footer .legal p { margin: 0 0 6px; }
+
+/* ---------- 進場動畫 ---------- */
+.js .rv { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
+.js .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .rv { opacity: 1; transform: none; transition: none; }
+  .stage .lyrics, .track { animation: none; }
+}
 </style>
 </head>
 <body>
+<script>document.documentElement.classList.add('js')</script>
 
-<header class="top">
+<header class="nav">
   <div class="wrap">
-    <a class="brand" href="#"><img src="icon.svg" alt="">魔唱</a>
+    <a class="logo" href="#"><img src="icon.svg" alt="">魔唱 <span>MagiSing</span></a>
     <nav>
-      <a class="opt" href="#features">功能</a>
+      <a href="#features">功能</a>
       <a href="#install">安裝</a>
-      <a class="opt" href="#privacy">隱私</a>
+      <a href="#privacy">隱私</a>
+      <a href="#keys">快捷鍵</a>
       <a href="https://github.com/johnnyjong823/magising">GitHub</a>
     </nav>
+    <a class="btn btn-blue" data-dl href="https://github.com/johnnyjong823/magising/releases">免費下載</a>
   </div>
 </header>
 
 <section class="hero">
   <div class="wrap">
-    <div>
-      <h1><img src="icon.svg" alt=""><span>魔唱<small>MagiSing</small></span></h1>
-      <p class="tagline">一邊用電腦，一邊跟著字幕唱。</p>
-      <p class="desc">用 YouTube Music、Spotify、KKBOX 播歌時，魔唱會自動找歌詞，在螢幕上顯示 KTV 風格的逐字字幕。字幕浮在所有視窗上面，滑鼠可以直接點穿，不影響你做別的事。</p>
-      <a class="dl" id="dl" href="https://github.com/johnnyjong823/magising/releases">
+    <h1 class="rv">一邊用電腦，<br>一邊跟著字幕唱。</h1>
+    <p class="sub rv" style="--d:.1s">播歌時自動找歌詞，在螢幕上顯示 KTV 逐字字幕。<br>字幕浮在所有視窗上面，滑鼠直接點穿，不影響你做事。</p>
+    <div class="btns rv" style="--d:.2s">
+      <a class="btn btn-white" data-dl href="https://github.com/johnnyjong823/magising/releases">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M12 3v12M6 10l6 6 6-6M4 20h16"/></svg>
-        <span id="dl-text">免費下載</span>
+        <span data-dl-label>免費下載 Windows 版</span>
       </a>
-      <p class="dl-meta" id="dl-meta">Windows 10 21H2 以上 / Windows 11</p>
-      <ul class="badges">
-        <li>完全免費</li><li>沒有廣告</li><li>開源 GPL-3.0</li><li>不用註冊</li><li>不需要管理員權限</li>
-      </ul>
+      <a class="ghost" href="https://github.com/johnnyjong823/magising">在 GitHub 看原始碼</a>
     </div>
-    <div>
-      <div class="screen" aria-label="字幕示範：桌面上浮著逐字變色的 KTV 字幕">
-        <div class="win"><i></i><i></i><i></i></div>
-        <div class="player"><div class="cover"></div><b>示範歌曲</b><span>魔唱</span><div class="bar"><u id="bar"></u></div></div>
-        <div class="lyrics">
-          <div class="slot a" id="slotA"></div>
-          <div class="slot b" id="slotB"></div>
+    <p class="meta rv" style="--d:.25s" data-dl-meta>Windows 10 21H2 以上 / Windows 11 · 不需要管理員權限</p>
+    <figure class="stage rv" style="--d:.3s">
+      <img class="panel" src="shots/panel-now.png" width="1770" height="1760" alt="魔唱控制面板的「正在播放」頁：顯示目前播放的歌、對時間按鈕與逐字歌詞清單">
+      <img class="lyrics" src="shots/overlay.png" width="2050" height="328" alt="魔唱的 KTV 字幕：「祝你生日快樂」兩行交替顯示，唱到的字填上藍紫漸層">
+      <figcaption>實際軟體畫面</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="wrap">
+    <div class="stat rv"><b>NT$0</b><span>完全免費</span><small>沒有付費版，也沒有試用期</small></div>
+    <div class="stat rv" style="--d:.08s"><b>3</b><span>個歌詞來源</span><small>網易雲音樂、酷狗音樂、LRCLIB</small></div>
+    <div class="stat rv" style="--d:.16s"><b>5+</b><span>種播放器</span><small>接上 Windows 媒體控制的大多能用</small></div>
+    <div class="stat rv" style="--d:.24s"><b>0</b><span>廣告與追蹤</span><small>不用註冊，資料只在你的電腦</small></div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="cols">
+      <div class="col rv">
+        <div class="shot"><img src="shots/panel-now.png" width="1770" height="1760" alt="「正在播放」頁：已找到歌詞，下面列出逐字歌詞" loading="lazy"></div>
+        <h3>自動找歌詞</h3>
+        <p>開著就好。換歌時自動到網易雲音樂、酷狗音樂、LRCLIB 找最符合的歌詞，依語言挑最適合的來源。</p>
+        <ul class="rows">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>偵測 Windows 媒體控制裡正在播的歌，換歌就換歌詞。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7h18M3 12h12M3 17h7"/></svg>逐字時間一字一字填色；只有逐行時間也會依字數估算。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>找錯了？從候選清單換、自己搜尋，或拖一個 .lrc 檔進來。</li>
+        </ul>
+      </div>
+      <div class="col rv" style="--d:.1s">
+        <div class="shot"><img src="shots/panel-style.png" width="1800" height="1760" alt="「字幕樣式」頁：擺放位置、字幕大小、字型、顏色、外框與不透明度" loading="lazy"></div>
+        <h3>外觀隨你調</h3>
+        <p>字幕放哪、多大、什麼顏色都能調，改設定的時候字幕會顯示預覽字，馬上看得到效果。</p>
+        <ul class="rows">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16"/><path d="M3 15h18"/></svg>位置、大小、像素字或一般粗體、一行或兩行交替。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h8.5"/></svg>唱過與沒唱的顏色、外框、陰影、不透明度。</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c0 5 4 8 7 9M11 5c0 4-3 8-7 10M13 21l4-10 4 10M14.5 17.5h5"/></svg>日文歌附中文翻譯與羅馬拼音；簡體歌詞自動轉繁體。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="players" aria-label="支援的播放器：YouTube Music、Spotify、Apple Music、KKBOX、瀏覽器裡的 YouTube">
+  <div class="label">支援的播放器</div>
+  <div class="track" aria-hidden="true">
+    <span>YouTube Music</span><span>Spotify</span><span>Apple Music</span><span>KKBOX</span><span>瀏覽器裡的 YouTube</span>
+    <span>YouTube Music</span><span>Spotify</span><span>Apple Music</span><span>KKBOX</span><span>瀏覽器裡的 YouTube</span>
+  </div>
+</div>
+
+<section class="install" id="install">
+  <div class="wrap">
+    <span class="eyebrow rv">安裝</span>
+    <h2 class="h-xl rv">三個步驟，<br>開始跟著唱。</h2>
+    <p class="lead rv">安裝到你的使用者資料夾，不需要管理員權限。安裝檔由 GitHub 從公開的原始碼自動建置。</p>
+    <div class="btns rv">
+      <a class="btn btn-blue" data-dl href="https://github.com/johnnyjong823/magising/releases">免費下載</a>
+      <a class="link" href="https://github.com/johnnyjong823/magising/releases">所有版本</a>
+    </div>
+  </div>
+  <div class="layers">
+    <div class="layer">
+      <div class="tab"><em>01</em>下載安裝檔</div>
+      <div class="inner"><p>按「免費下載」取得 <b>MagiSing_Setup_版本.exe</b>。系統需求：Windows 10 21H2 以上或 Windows 11。</p></div>
+    </div>
+    <div class="layer">
+      <div class="tab"><em>02</em>執行安裝</div>
+      <div class="inner">
+        <p>依畫面按下一步。少數 Windows 10 沒有 WebView2 時，會自動從微軟下載安裝。<br><br>如果跳出「<b>Windows 已保護您的電腦</b>」，按「<b>其他資訊</b>」→「<b>仍要執行</b>」。這是因為安裝檔還沒有程式碼簽章，Windows 還不認得這個新程式；簽章正在申請中。</p>
+        <div class="ss" aria-hidden="true">
+          <strong>Windows 已保護您的電腦</strong>
+          Microsoft Defender SmartScreen 已防止某個無法辨識的應用程式啟動。<br><u>其他資訊</u>
+          <div class="b"><span>仍要執行</span><span>不要執行</span></div>
         </div>
       </div>
-      <p class="screen-cap">示意畫面：字幕會一個字一個字填上顏色</p>
+    </div>
+    <div class="layer">
+      <div class="tab"><em>03</em>播歌</div>
+      <div class="inner"><p>打開你常用的播放器播歌，字幕就會出現。魔唱會待在右下角的系統匣，關掉控制面板字幕照樣顯示；要結束請在系統匣圖示按右鍵 →「結束魔唱」。</p></div>
     </div>
   </div>
 </section>
 
-<section id="features">
-  <div class="wrap">
-    <h2>功能</h2>
-    <p class="lead">開著就好，換歌時自動找下一首的歌詞。</p>
-    <div class="grid">
-      <div class="card"><h3><span class="dot"></span>自動找歌詞</h3><p>偵測 Windows 媒體控制裡正在播放的歌，依語言到網易雲音樂、酷狗音樂、LRCLIB 找最符合的歌詞。</p></div>
-      <div class="card"><h3><span class="dot"></span>KTV 逐字填色</h3><p>有逐字時間的歌詞會一個字一個字變色；只有逐行時間時，依字數估算每個字的時間。</p></div>
-      <div class="card"><h3><span class="dot"></span>翻譯與羅馬拼音</h3><p>日文歌大多附中文翻譯和羅馬拼音，可以分別開關。</p></div>
-      <div class="card"><h3><span class="dot"></span>對時間</h3><p>字幕太快或太慢時，用按鈕或快捷鍵微調，每首歌各自記住。</p></div>
-      <div class="card"><h3><span class="dot"></span>換一份歌詞</h3><p>自動找到的不對時，可以從候選清單挑、自己輸入關鍵字搜尋，或拖一個 .lrc 檔進來。</p></div>
-      <div class="card"><h3><span class="dot"></span>外觀隨你調</h3><p>位置、大小、像素字或一般粗體、顏色、外框、陰影、不透明度都可以調。</p></div>
-      <div class="card"><h3><span class="dot"></span>簡轉繁</h3><p>簡體歌詞自動轉成繁體。日文歌詞不轉，免得改壞漢字。</p></div>
+<section id="privacy">
+  <div class="band">
+    <div class="wrap">
+      <span class="eyebrow rv">隱私</span>
+      <h2 class="rv">你的電腦，<br>你的資料。</h2>
     </div>
-    <ul class="apps" aria-label="支援的播放器">
-      <li>YouTube Music</li><li>Spotify</li><li>Apple Music</li><li>KKBOX</li><li>瀏覽器裡的 YouTube</li>
-    </ul>
-    <p class="apps-note">只要播放器有接上 Windows 的媒體控制（按鍵盤音量鍵時會跳出歌名的那個），大多都能用。</p>
   </div>
-</section>
-
-<section class="alt" id="install">
-  <div class="wrap">
-    <h2>安裝</h2>
-    <p class="lead">安裝到你的使用者資料夾，不需要管理員權限。</p>
-    <ol class="steps">
-      <li><b>下載安裝檔</b><p>按上面的「免費下載」，取得 <code>MagiSing_Setup_版本.exe</code>。</p></li>
-      <li><b>執行安裝</b><p>依畫面按下一步。少數 Windows 10 沒有 WebView2 時，會自動從微軟下載安裝。</p></li>
-      <li><b>播歌</b><p>打開你常用的播放器播歌，字幕就會出現。之後在系統匣可以找到魔唱的圖示。</p></li>
-    </ol>
-    <div class="warn">
-      <div class="ss" aria-hidden="true">
-        <strong>Windows 已保護您的電腦</strong>
-        Microsoft Defender SmartScreen 已防止某個無法辨識的應用程式啟動。<br><u>其他資訊</u>
-        <div class="btns"><span class="hl">仍要執行</span><span>不要執行</span></div>
-      </div>
-      <div>
-        <p><b>跳出「Windows 已保護您的電腦」？</b>按「<b>其他資訊</b>」→「<b>仍要執行</b>」就可以安裝。</p>
-        <p>這是因為安裝檔還沒有程式碼簽章，Windows 不認得這個新程式。簽章正在申請中；魔唱的原始碼完全公開，安裝檔都由 GitHub 自動從原始碼建置。</p>
+  <div class="spec-wrap">
+    <div class="wrap">
+      <p class="intro rv">魔唱只在找歌詞時，把<b>正在播放的歌名、歌手與歌曲長度</b>（LRCLIB 另含專輯名稱）以及手動搜尋的關鍵字，送給你開著的歌詞服務。除此之外不會把任何資訊傳出去。</p>
+      <dl class="spec rv">
+        <div><dt>價格</dt><dd>免費</dd></div>
+        <div><dt>帳號</dt><dd>不用註冊</dd></div>
+        <div><dt>廣告與追蹤</dt><dd>沒有</dd></div>
+        <div><dt>歌詞服務</dt><dd>可在設定裡逐一或全部關閉</dd></div>
+        <div><dt>設定與歌詞快取</dt><dd>只存在你的電腦</dd></div>
+        <div><dt>原始碼</dt><dd>公開（GPL-3.0）</dd></div>
+      </dl>
+      <p class="spec-note rv">酷狗的歌曲搜尋是未加密的 HTTP 連線。歌詞服務全部關掉時，只用電腦裡的 .lrc 檔。</p>
+      <div class="btns center rv" style="justify-content:center">
+        <a class="btn btn-grey" href="https://github.com/johnnyjong823/magising/blob/main/src-tauri/LICENSE.txt">閱讀完整隱私政策</a>
       </div>
     </div>
-    <p class="req">系統需求：Windows 10 21H2 以上或 Windows 11。</p>
   </div>
 </section>
 
-<section id="keys">
-  <div class="wrap">
-    <h2>預設快捷鍵</h2>
-    <p class="lead">都可以在「設定」裡改。</p>
-    <table class="keys">
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd></td><td>顯示 / 隱藏字幕</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>E</kbd></td><td>移動字幕（拖曳位置、拉大小）</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>]</kbd> / <kbd>[</kbd></td><td>歌詞提早 / 延後 0.25 秒（加 <kbd>Shift</kbd> 是 0.05 秒）</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>0</kbd></td><td>這首歌的偏移歸零</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd></td><td>重新搜尋歌詞</td></tr>
-    </table>
-    <p class="keys-note">關掉控制面板不會結束程式，要結束請在系統匣圖示按右鍵 →「結束魔唱」。</p>
-  </div>
-</section>
-
-<section class="alt" id="privacy">
-  <div class="wrap">
-    <h2>隱私</h2>
-    <p class="lead">不用註冊帳號，沒有廣告，不追蹤使用行為。</p>
-    <ul class="privacy">
-      <li>找歌詞時，會把<b>正在播放的歌名、歌手與歌曲長度</b>（LRCLIB 另含專輯名稱），以及<b>手動搜尋時輸入的關鍵字</b>，送給網易雲音樂、酷狗音樂、LRCLIB。酷狗的歌曲搜尋是未加密的 HTTP 連線。</li>
-      <li>可以在「設定 → 歌詞來源」關掉任何一個或全部歌詞服務。全部關掉時只用電腦裡的 .lrc 檔，不會把歌曲資訊傳出去。</li>
-      <li>設定、歌詞快取與紀錄檔只存在你的電腦（<code>%APPDATA%\MagiSing\</code>）。</li>
-    </ul>
-    <p>完整的隱私政策與使用聲明見 <a href="https://github.com/johnnyjong823/magising/blob/main/src-tauri/LICENSE.txt">LICENSE.txt</a>，安裝時也會顯示。</p>
+<section class="keys" id="keys">
+  <div class="wrap grid">
+    <div>
+      <span class="eyebrow rv">快捷鍵</span>
+      <h2 class="h-xl rv">不用切視窗，<br>鍵盤就能調。</h2>
+      <p class="lead rv">字幕太快或太慢時微調一下，每首歌各自記住。快捷鍵都可以在「設定」裡改。</p>
+    </div>
+    <dl class="spec rv">
+      <div><dt>顯示 / 隱藏字幕</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>L</kbd></dd></div>
+      <div><dt>移動字幕、拉大小</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>E</kbd></dd></div>
+      <div><dt>歌詞提早 0.25 秒</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>]</kbd></dd></div>
+      <div><dt>歌詞延後 0.25 秒</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>[</kbd></dd></div>
+      <div><dt>微調 0.05 秒</dt><dd>再加 <kbd>Shift</kbd></dd></div>
+      <div><dt>這首歌的偏移歸零</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>0</kbd></dd></div>
+      <div><dt>重新搜尋歌詞</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>R</kbd></dd></div>
+    </dl>
   </div>
 </section>
 
 <section class="cta">
   <div class="wrap">
-    <h2>唱得開心嗎？</h2>
-    <p class="lead" style="margin:8px 0 0">魔唱完全免費。<span id="donate-text">歡迎到 GitHub 給個星星，或回報問題、提建議。</span></p>
-    <div class="row">
-      <a class="btn2" id="donate" href="" hidden>斗內請開發者喝飲料</a>
-      <a class="btn2" href="https://github.com/johnnyjong823/magising">GitHub 給個星星</a>
-      <a class="btn2" href="https://github.com/johnnyjong823/magising/issues">回報問題</a>
+    <h2 class="rv">今天就開始，<br>跟著字幕唱。</h2>
+    <p class="rv">魔唱完全免費。<span data-donate-text>喜歡的話，到 GitHub 給個星星就是最大的鼓勵。</span></p>
+    <div class="btns rv">
+      <a class="btn btn-white" data-dl href="https://github.com/johnnyjong823/magising/releases">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M12 3v12M6 10l6 6 6-6M4 20h16"/></svg>
+        <span data-dl-label>免費下載 Windows 版</span>
+      </a>
+      <a class="ghost" data-donate href="" hidden>斗內請開發者喝飲料</a>
+      <a class="ghost" href="https://github.com/johnnyjong823/magising">GitHub 給個星星</a>
     </div>
+    <img class="rv" src="shots/overlay.png" width="2050" height="328" alt="" loading="lazy">
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <div class="links">
-      <a href="https://github.com/johnnyjong823/magising">原始碼</a>
-      <a href="https://github.com/johnnyjong823/magising/releases">所有版本</a>
-      <a href="https://github.com/johnnyjong823/magising#code-signing-policy">Code signing policy</a>
-      <a href="https://johnnyx9487.bdcweb.org/">找我做軟體、網頁或系統</a>
+    <div class="cols">
+      <div>
+        <a class="logo" href="#"><img src="icon.svg" alt="">魔唱 MagiSing</a>
+        <p style="margin:0;max-width:300px">播歌時自動顯示 KTV 逐字字幕的 Windows 小工具。</p>
+      </div>
+      <div>
+        <h4>下載</h4>
+        <ul>
+          <li><a data-dl href="https://github.com/johnnyjong823/magising/releases">最新版本</a></li>
+          <li><a href="https://github.com/johnnyjong823/magising/releases">所有版本</a></li>
+          <li><a href="#install">安裝說明</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>開源</h4>
+        <ul>
+          <li><a href="https://github.com/johnnyjong823/magising">原始碼</a></li>
+          <li><a href="https://github.com/johnnyjong823/magising/issues">回報問題</a></li>
+          <li><a href="https://github.com/johnnyjong823/magising#code-signing-policy">Code signing policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>開發者</h4>
+        <ul>
+          <li><a href="https://johnnyx9487.bdcweb.org/">找我做軟體、網頁或系統</a></li>
+          <li><a data-donate href="" hidden>斗內支持</a></li>
+        </ul>
+      </div>
     </div>
-    <p>魔唱以 <a href="https://github.com/johnnyjong823/magising/blob/main/LICENSE">GPL-3.0-or-later</a> 授權。「魔唱」「MagiSing」名稱與程式圖示代表原作者發行的版本。</p>
-    <p>魔唱是個人開發的非官方工具，和網易雲音樂、酷狗音樂、LRCLIB、YouTube Music、Spotify、Apple Music、KKBOX 等服務沒有任何關係。歌詞的著作權屬於原詞曲作者與權利人，魔唱只在你的電腦上快取，供個人練唱使用。</p>
+    <div class="legal">
+      <p>魔唱以 <a href="https://github.com/johnnyjong823/magising/blob/main/LICENSE">GPL-3.0-or-later</a> 授權。「魔唱」「MagiSing」名稱與程式圖示代表原作者發行的版本。</p>
+      <p>魔唱是個人開發的非官方工具，和網易雲音樂、酷狗音樂、LRCLIB、YouTube Music、Spotify、Apple Music、KKBOX 等服務沒有任何關係。歌詞的著作權屬於原詞曲作者與權利人，魔唱只在你的電腦上快取，供個人練唱使用。</p>
+    </div>
   </div>
 </footer>
 
@@ -304,100 +415,35 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 18
   const REPO = 'johnnyjong823/magising';
   const DONATE_URL = '';   // 綠界斗內網址申請好之後填這裡（同 README 的 DONATE_LINK、paths.rs 的 LINKS）
 
-  // ---------- 斗內按鈕：有網址才顯示 ----------
+  // ---------- 斗內：有網址才顯示 ----------
   if (DONATE_URL) {
-    const d = document.getElementById('donate');
-    d.href = DONATE_URL; d.hidden = false;
-    document.getElementById('donate-text').textContent = '如果它陪你唱得開心，歡迎斗內支持之後繼續更新。';
+    document.querySelectorAll('[data-donate]').forEach(a => { a.href = DONATE_URL; a.hidden = false; });
+    document.querySelectorAll('[data-donate-text]').forEach(s => { s.textContent = '如果它陪你唱得開心，歡迎斗內支持之後繼續更新。'; });
   }
 
-  // ---------- 下載按鈕：抓最新正式版的安裝檔，抓不到就連到 Releases 頁 ----------
-  const fmtSize = b => (b / 1048576).toFixed(1) + ' MB';
+  // ---------- 下載：抓最新正式版的安裝檔，抓不到就維持連到 Releases 頁 ----------
   fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers: { Accept: 'application/vnd.github+json' } })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(rel => {
       const asset = rel.assets.find(a => /_Setup_.*\.exe$/i.test(a.name));
       if (!asset) return;
-      document.getElementById('dl').href = asset.browser_download_url;
-      document.getElementById('dl-text').textContent = `免費下載 ${rel.tag_name}`;
+      document.querySelectorAll('[data-dl]').forEach(a => { a.href = asset.browser_download_url; });
+      document.querySelectorAll('[data-dl-label]').forEach(s => { s.textContent = `免費下載 ${rel.tag_name}`; });
+      const mb = (asset.size / 1048576).toFixed(1);
       const date = new Date(rel.published_at).toLocaleDateString('zh-TW');
-      document.getElementById('dl-meta').textContent =
-        `${fmtSize(asset.size)} · ${date} 發佈 · Windows 10 21H2 以上 / Windows 11`;
+      document.querySelectorAll('[data-dl-meta]').forEach(p => {
+        p.textContent = `${mb} MB · ${date} 發佈 · Windows 10 21H2 以上 / Windows 11 · 不需要管理員權限`;
+      });
     })
     .catch(() => {});
 
-  // ---------- 字幕示範（歌詞為示範用原創文字） ----------
-  const LINES = [
-    { t: '打開喜歡的歌', d: 2.4 },
-    { t: '字幕就跟著亮起來', d: 2.8 },
-    { t: '一邊工作一邊唱', d: 2.6 },
-    { t: '今天也是一個人的 KTV', d: 3.2 },
-  ];
-  const GAP = 0.5;
-  const slots = [document.getElementById('slotA'), document.getElementById('slotB')];
-  const bar = document.getElementById('bar');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function makeLine(text) {
-    const el = document.createElement('div');
-    el.className = 'ln';
-    for (const cls of ['ink', 'base', 'fill']) {
-      const s = document.createElement('span');
-      s.className = cls; s.textContent = text;
-      el.appendChild(s);
-    }
-    return el;
-  }
-  // 每個字右邊界的位置（相對整行），用來讓填色一個字一個字前進
-  function edges(el) {
-    const node = el.querySelector('.base').firstChild;
-    const left = el.getBoundingClientRect().left;
-    const r = document.createRange();
-    const out = [];
-    for (let i = 0; i < node.length; i++) {
-      r.setStart(node, i); r.setEnd(node, i + 1);
-      const b = r.getBoundingClientRect();
-      out.push({ l: b.left - left, r: b.right - left });
-    }
-    return out;
-  }
-
-  const total = LINES.reduce((s, l) => s + l.d + GAP, 0);
-  let cur = -1, lineEls = [], edgeCache = [];
-
-  function show(i) {
-    // 第 i 行放在 A/B 輪流的位置，另一個位置先放下一行（KTV 交錯顯示）
-    const j = (i + 1) % LINES.length;
-    slots[i % 2].replaceChildren(lineEls[i]);
-    slots[j % 2].replaceChildren(lineEls[j]);
-    lineEls[i].classList.remove('next');
-    lineEls[j].classList.add('next');
-    lineEls[j].style.setProperty('--p', '0px');
-  }
-
-  function frame(now) {
-    const t = (now / 1000) % total;
-    let acc = 0, i = 0;
-    while (i < LINES.length - 1 && t >= acc + LINES[i].d + GAP) { acc += LINES[i].d + GAP; i++; }
-    if (i !== cur) { cur = i; show(i); }
-    const prog = Math.min(1, Math.max(0, (t - acc) / LINES[i].d));
-    const e = edgeCache[i] || (edgeCache[i] = edges(lineEls[i]));
-    const chars = e.length * prog;
-    const k = Math.floor(chars);
-    const px = k >= e.length ? e[e.length - 1].r : e[k].l + (e[k].r - e[k].l) * (chars - k);
-    lineEls[i].style.setProperty('--p', `${px}px`);
-    bar.style.width = (t / total * 100) + '%';
-    requestAnimationFrame(frame);
-  }
-
-  lineEls = LINES.map(l => makeLine(l.t));
-  if (reduce) {
-    show(0);
-    lineEls[0].style.setProperty('--p', '100%');
-  } else {
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(frame));
-    addEventListener('resize', () => { edgeCache = []; });
-  }
+  // ---------- 捲動進場 ----------
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(e => io.observe(e));
 })();
 </script>
 </body>

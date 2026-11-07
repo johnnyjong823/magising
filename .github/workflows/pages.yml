@@ -1,7 +1,7 @@
 # 下載頁（site/）部署到 GitHub Pages：https://johnnyjong823.github.io/magising/
-# - 改了 site/、圖示或字型推到 main 就會自動部署；也可以在 Actions → Pages → Run workflow 手動部署
+# - 改了 site/ 或圖示推到 main 就會自動部署；也可以在 Actions → Pages → Run workflow 手動部署
 # - 下載按鈕在瀏覽器端讀「最新正式版 Release」的安裝檔，發新版不用重新部署
-# - 字型、圖示從程式本身的檔案複製，不在 site/ 裡另存一份
+# - 圖示從程式本身的檔案複製，不在 site/ 裡另存一份；shots/ 是實際軟體截圖
 name: Pages
 
 on:
@@ -11,7 +11,6 @@ on:
       - 'site/**'
       - 'app-icon.svg'
       - 'src-tauri/icons/128x128@2x.png'
-      - 'web/shared/fonts/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -35,10 +34,8 @@ jobs:
 
       - name: 組合網站檔案
         run: |
-          mkdir -p site/fonts
           cp app-icon.svg site/icon.svg
           cp src-tauri/icons/128x128@2x.png site/og.png
-          cp web/shared/fonts/Cubic_11.woff2 site/fonts/
 
       - uses: actions/configure-pages@v5
 
