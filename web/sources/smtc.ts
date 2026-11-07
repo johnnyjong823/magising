@@ -2,44 +2,16 @@
 import { buildTrack } from '../core/normalize';
 import type { ClockSnapshot, TrackInfo } from '../core/types';
 import type { SmtcSession } from '../shared/backend';
+import { appName, isKnown } from './apps';
+
+export { appName };
+
+/** 有正常歌曲長度（30 秒～20 分鐘）。直播沒有長度（0）或長得不像一首歌 */
+export const songLike = (s: SmtcSession) => s.endMs >= 30_000 && s.endMs <= 20 * 60_000;
 
 /**
- * 認得的播放器（比對 AUMID，由上往下第一個符合的為準）。改這裡也要改 src-tauri/src/smtc.rs 的 APPS。
- * 瀏覽器分頁（YouTube、Spotify 網頁版、KKBOX 網頁版、SoundCloud…）會以瀏覽器的名義出現。
- */
-const APPS: [RegExp, string][] = [
-  [/_crx_cinhimbnkk/i, 'YT Music'],           // YT Music PWA：Chrome._crx_cinhimbnkk…
-  [/spotify/i, 'Spotify'],
-  [/applemusic|itunes/i, 'Apple Music'],
-  [/amazon\s*music/i, 'Amazon Music'],
-  [/kkbox/i, 'KKBOX'],
-  [/tidal/i, 'TIDAL'],
-  [/deezer/i, 'Deezer'],
-  [/zunemusic/i, '媒體播放器'],
-  [/foobar2000/i, 'foobar2000'],
-  [/musicbee/i, 'MusicBee'],
-  [/aimp/i, 'AIMP'],
-  [/cloudmusic/i, '網易雲音樂'],
-  [/qqmusic/i, 'QQ 音樂'],
-  [/kugou/i, '酷狗音樂'],
-  [/_crx_/i, '網頁 App'],                     // 其他 Chrome / Edge PWA
-  [/chrome/i, 'Chrome'],
-  [/msedge/i, 'Edge'],
-  [/firefox|308046B0AF4A39CB/i, 'Firefox'],   // Firefox 的 AUMID 是安裝路徑的雜湊，預設路徑是這串
-  [/opera/i, 'Opera'],
-  [/brave/i, 'Brave'],
-  [/vivaldi/i, 'Vivaldi'],
-];
-
-const isKnown = (aumid: string) => APPS.some(([re]) => re.test(aumid));
-
-export function appName(aumid: string): string {
-  return APPS.find(([re]) => re.test(aumid))?.[1] ?? aumid.replace(/\.exe$/i, '').split(/[\\!]/).pop() ?? aumid;
-}
-
-/**
- * ① 手動釘選 ② 正在播的 YT Music PWA ③ 正在播且是認得的播放器（Spotify、Apple Music、KKBOX、瀏覽器…）
- * ④ YT Music（暫停中）⑤ 系統目前的 Session ⑥ 第一個
+ * ① 手動釘選 ② 正在播的 YT Music PWA ③ 正在播、認得、而且長度像一首歌（避開瀏覽器裡的直播）
+ * ④ 正在播且是認得的播放器（Spotify、Apple Music、KKBOX、瀏覽器…）⑤ YT Music（暫停中）⑥ 系統目前的 Session ⑦ 第一個
  */
 export function pickSession(list: SmtcSession[], pinned: string | null): SmtcSession | null {
   const live = list.filter((s) => s.title);
@@ -48,6 +20,7 @@ export function pickSession(list: SmtcSession[], pinned: string | null): SmtcSes
   const ytm = (s: SmtcSession) => appName(s.aumid) === 'YT Music';
   return (pinned ? live.find((s) => s.aumid === pinned) : undefined)
     ?? live.find((s) => ytm(s) && playing(s))
+    ?? live.find((s) => playing(s) && isKnown(s.aumid) && songLike(s))
     ?? live.find((s) => playing(s) && isKnown(s.aumid))
     ?? live.find(ytm)
     ?? live.find((s) => s.isCurrent)

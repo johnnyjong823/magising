@@ -271,6 +271,14 @@ describe('來源順序與播放器辨識', () => {
     expect(pickSession([s(ytm, 'paused'), s(sp, 'playing')], ytm)?.aumid).toBe(ytm);
   });
 
+  it('同時在播時，有歌曲長度的優先於直播（沒有長度）', () => {
+    const s = (aumid: string, endMs: number) =>
+      ({ aumid, title: 't', artist: 'a', album: '', status: 'playing' as const, positionMs: 0, endMs, lastUpdatedUnixMs: 0, rate: 1, isCurrent: false });
+    expect(pickSession([s('Chrome', 0), s('Chrome._crx_otherytmappid', 240_000)], null)?.aumid).toBe('Chrome._crx_otherytmappid');
+    expect(pickSession([s('Chrome', 3 * 3600_000), s('Spotify.exe', 200_000)], null)?.aumid).toBe('Spotify.exe');
+    expect(pickSession([s('Chrome', 0)], null)?.aumid).toBe('Chrome');   // 只有直播時照樣選它
+  });
+
   it('Spotify 廣告', () => {
     expect(looksLikeAd('Advertisement', '')).toBe(true);
     expect(looksLikeAd('Listen ad-free', 'Spotify')).toBe(true);

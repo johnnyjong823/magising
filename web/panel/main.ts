@@ -4,7 +4,8 @@ import { emitTo, listen } from '@tauri-apps/api/event';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 import { open } from '@tauri-apps/plugin-dialog';
 import { hydrateIcons, iconSvg, setIcon } from '../shared/icons';
-import { api, type HotkeyAction, type HotkeyStatus, type Settings, type UiState } from '../shared/backend';
+import { api, type HotkeyAction, type HotkeyStatus, type Settings, type SmtcSession, type UiState } from '../shared/backend';
+import { appName } from '../sources/apps';
 import { EV, type CoreCmd, type CoreTick, type CoreTrackState } from '../shared/protocol';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -108,6 +109,38 @@ function paintTrack() {
   paintCands();
   paintLyricList();
   paintTick();
+  paintSources();
+}
+
+// ================= 播放來源（同時有好幾個在播時切換；和系統匣「播放來源」同一個設定） =================
+let sessions: SmtcSession[] = [];
+let srcKey = '';
+listen<SmtcSession[]>('smtc', ({ payload }) => { sessions = payload.filter((s) => s.title); paintSources(); });
+
+function paintSources() {
+  if (!settings) return;
+  const pinned = settings.pinnedAumid;
+  const using = st?.track?.appId ?? '';
+  const items = sessions.map((s) => ({ aumid: s.aumid, name: appName(s.aumid), title: s.title, playing: s.status === 'playing' }));
+  if (pinned && !items.some((i) => i.aumid === pinned)) items.push({ aumid: pinned, name: appName(pinned), title: '目前沒有播放', playing: false });
+  // 只有一個來源、也沒有釘選時不用選，整列藏起來
+  const show = items.length >= 2 || !!pinned;
+  const key = JSON.stringify([show, pinned, using, items]);
+  if (key === srcKey) return;
+  srcKey = key;
+  $('srcRow').hidden = !show;
+  if (!show) return;
+  $('srcList').innerHTML =
+    `<button class="btn sm${pinned ? '' : ' active'}" data-src="">自動選擇</button>` +
+    items.map((i) => `<button class="btn sm${pinned === i.aumid ? ' active' : ''}" data-src="${esc(i.aumid)}" title="${esc(i.name + ' — ' + i.title)}">
+      <span class="dot${i.playing ? ' on' : ''}"></span>${esc(i.name)}<span class="t muted">${esc(i.title)}</span>${using === i.aumid ? '<span class="use">字幕</span>' : ''}</button>`).join('');
+  $('srcList').querySelectorAll<HTMLElement>('[data-src]').forEach((b) => {
+    b.onclick = async () => {
+      const aumid = b.dataset.src || null;
+      await save({ pinnedAumid: aumid });
+      tip(aumid ? `字幕改跟著「${appName(aumid)}」` : '改回自動選擇（YT Music 優先，其次是正在播的歌）');
+    };
+  });
 }
 
 function paintLyricState() {
@@ -279,6 +312,7 @@ function paintSettings() {
   $('lrcDirText').textContent = s.lrcDir || '（沒有設定）';
   $('lrcDirClear').hidden = !s.lrcDir;
   paintHotkeys();
+  paintSources();
 }
 $('sungSw').innerHTML = SUNG.map(([n, a, b]) => `<button class="sw" title="${n}" data-from="${a}" data-to="${b}" style="background:linear-gradient(${a},${b})"></button>`).join('');
 $('unsungSw').innerHTML = UNSUNG.map(([n, c]) => `<button class="sw" title="${n}" data-c="${c}" style="background:${c}"></button>`).join('');

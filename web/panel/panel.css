@@ -74,6 +74,14 @@ h1 { margin: 0; font-size: 30px; font-weight: normal; letter-spacing: 2px; text-
 .now-text { min-width: 0; }
 .badge { display: inline-block; font-size: 12px; padding: 1px 8px; background: var(--sky-1); color: var(--sky-5); margin-bottom: 4px; }
 .badge.ytm { background: #ffe8d6; color: #b8501a; }
+.src-row { margin-top: 18px; }
+.src-label { font-size: 13px; margin-bottom: 8px; }
+.src-list { display: flex; flex-wrap: wrap; gap: 10px 12px; }
+.src-list .btn { max-width: 100%; }
+.src-list .btn .t { overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.src-list .dot { width: 8px; height: 8px; flex: none; background: var(--ink-3); }
+.src-list .dot.on { background: var(--mint); }
+.src-list .use { font-size: 11px; padding: 0 5px; background: var(--sky-4); color: var(--paper); }
 .song { font-size: 24px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .artist { color: var(--ink-2); font-size: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
