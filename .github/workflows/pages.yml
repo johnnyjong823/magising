@@ -1,0 +1,50 @@
+# 下載頁（site/）部署到 GitHub Pages：https://johnnyjong823.github.io/magising/
+# - 改了 site/、圖示或字型推到 main 就會自動部署；也可以在 Actions → Pages → Run workflow 手動部署
+# - 下載按鈕在瀏覽器端讀「最新正式版 Release」的安裝檔，發新版不用重新部署
+# - 字型、圖示從程式本身的檔案複製，不在 site/ 裡另存一份
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'app-icon.svg'
+      - 'src-tauri/icons/128x128@2x.png'
+      - 'web/shared/fonts/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 組合網站檔案
+        run: |
+          mkdir -p site/fonts
+          cp app-icon.svg site/icon.svg
+          cp src-tauri/icons/128x128@2x.png site/og.png
+          cp web/shared/fonts/Cubic_11.woff2 site/fonts/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
