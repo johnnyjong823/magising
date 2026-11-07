@@ -9,6 +9,7 @@ mod paths;
 mod settings;
 mod smtc;
 mod tray;
+mod update;
 mod windows_ui;
 
 fn main() {
@@ -56,6 +57,10 @@ fn main() {
             paths::open_link,
             paths::links_enabled,
             paths::open_doc,
+            update::update_status,
+            update::update_check,
+            update::update_open,
+            update::update_dismiss,
         ])
         .setup(move |app| {
             let h = app.handle();
@@ -63,6 +68,7 @@ fn main() {
             tray::create(h)?;
             hotkeys::apply(h);
             smtc::spawn(h.clone());
+            update::spawn(h.clone());
             if !minimized {
                 windows_ui::show_panel(h.clone());
             }

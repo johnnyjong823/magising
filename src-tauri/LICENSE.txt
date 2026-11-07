@@ -29,6 +29,7 @@ Copyright © 2026 Johnny
 4. 本軟體會讀取 Windows「媒體控制」裡播放器提供的歌曲資訊（歌名、歌手、播放進度、封面），只用來顯示字幕，不會傳出。
 5. 設定、歌詞快取與紀錄檔只存在你的電腦（%APPDATA%\MagiSing\；免安裝版則在程式旁的 data\ 資料夾），不會上傳。網頁元件（WebView2）的暫存檔在 %LOCALAPPDATA%\com.magising.app\。解除安裝時勾選「刪除應用程式資料」會一併刪除這兩個資料夾，也可以自己手動刪除。
 6. 本軟體會註冊全域快捷鍵；開機自動啟動預設關閉，要你自己打開。外部連結（網站、GitHub、斗內）只有在你按下按鈕時才會用瀏覽器開啟。
+7. 本軟體預設在啟動時與之後每天一次連到 GitHub（api.github.com）查詢最新的版本號，請求裡只有程式名稱與版本，不含歌曲或使用資料；有新版時只會提示你，不會自動下載或安裝。可以在「設定 → 其他」關掉。GitHub 如何處理連線紀錄，依 GitHub 的隱私政策。
 
 七、免責聲明
 本軟體依「現況」提供，不提供任何明示或默示的保證，包括但不限於適售性、特定用途適用性與不侵權。在法律允許的最大範圍內，作者不對因使用或無法使用本軟體所造成的任何直接、間接、附帶或衍生損害負責。（詳見 GPL-3.0 第 15、16 條。）
@@ -70,7 +71,11 @@ Source code: https://github.com/johnnyjong823/magising
    to the program in portable mode); WebView2 cache files are kept in
    %LOCALAPPDATA%\com.magising.app\. Both are removed if you tick "delete app
    data" when uninstalling. External links (website, GitHub, donation) open in
-   your browser only when you click them.
+   your browser only when you click them. At startup and once a day after
+   that, MagiSing asks GitHub (api.github.com) for the latest version number;
+   the request carries only the program name and version, no song or usage
+   data. A new version is only announced, never downloaded or installed
+   automatically. You can turn this off in Settings.
 7. Disclaimer. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
    TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AUTHOR IS NOT LIABLE FOR ANY
    DAMAGES ARISING FROM THE USE OF OR INABILITY TO USE THE SOFTWARE (see GPL-3.0

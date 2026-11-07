@@ -4,7 +4,7 @@ import { emitTo, listen } from '@tauri-apps/api/event';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 import { open } from '@tauri-apps/plugin-dialog';
 import { hydrateIcons, iconSvg, setIcon } from '../shared/icons';
-import { api, type HotkeyAction, type HotkeyStatus, type Settings, type SmtcSession, type UiState } from '../shared/backend';
+import { api, type HotkeyAction, type HotkeyStatus, type Settings, type SmtcSession, type UiState, type UpdateStatus } from '../shared/backend';
 import { appName } from '../sources/apps';
 import { EV, type CoreCmd, type CoreTick, type CoreTrackState } from '../shared/protocol';
 
@@ -311,6 +311,7 @@ function paintSettings() {
   document.querySelectorAll<HTMLElement>('[data-prov]').forEach((b) => b.classList.toggle('active', s.providers[b.dataset.prov as 'netease']));
   $('lrcDirText').textContent = s.lrcDir || '（沒有設定）';
   $('lrcDirClear').hidden = !s.lrcDir;
+  $('updAutoBtn').classList.toggle('active', s.checkUpdates);
   paintHotkeys();
   paintSources();
 }
@@ -408,6 +409,28 @@ $('autostartBtn').onclick = async () => {
   } catch (e) { tip('設定失敗：' + e); }
 };
 $('openData').onclick = () => api.openDataDir();
+$('updAutoBtn').onclick = () => save({ checkUpdates: !settings.checkUpdates });
+
+// ================= 新版本提示 =================
+function paintUpdate(u: UpdateStatus) {
+  $('updBar').classList.toggle('show', u.available && !u.dismissed);
+  if (u.available) $('updText').textContent = `有新版本 v${u.latest}（你現在是 v${u.current}），按「下載新版」到 GitHub 下載安裝檔，裝在原本的版本上就好，設定和歌詞都會保留。`;
+}
+$('updGet').onclick = () => api.updateOpen();
+$('updLater').onclick = () => api.updateDismiss();
+$('updCheck').onclick = async () => {
+  const b = $<HTMLButtonElement>('updCheck');
+  b.disabled = true;
+  try {
+    const u = await api.updateCheck();
+    paintUpdate(u);
+    if (u.available) tip(`有新版本 v${u.latest}，看最上面的提示`);
+    else tip(`已經是最新版本 v${u.current}`);
+  } catch (e) { tip('檢查失敗，請確認網路：' + e, 5000); }
+  finally { b.disabled = false; }
+};
+listen<UpdateStatus>('update', ({ payload }) => paintUpdate(payload));
+api.updateStatus().then(paintUpdate).catch(() => {});
 
 // ================= 關於 =================
 $('openLicense').onclick = () => api.openDoc('license').catch((e) => tip('打不開：' + e));

@@ -42,6 +42,7 @@
 - 找歌詞時，會把**正在播放的歌名、歌手與歌曲長度**（LRCLIB 另含專輯名稱），以及**手動搜尋時輸入的關鍵字**，送給網易雲音樂、酷狗音樂、LRCLIB。酷狗的歌曲搜尋是未加密的 HTTP 連線。
 - 可以在「設定 → 歌詞來源」關掉任何一個或全部歌詞服務。全部關掉時只用電腦裡的 `.lrc` 檔，不會把歌曲資訊傳出去。
 - 設定、歌詞快取與紀錄檔只存在你的電腦（`%APPDATA%\MagiSing\`）。
+- 啟動時與之後每天一次連到 GitHub 查詢最新的版本號（請求裡只有程式名稱與版本），有新版時提示你，不會自動下載安裝。可以在「設定 → 其他」關掉。
 
 完整的隱私政策與使用聲明見 [`src-tauri/LICENSE.txt`](src-tauri/LICENSE.txt)，安裝時也會顯示。
 
@@ -68,7 +69,7 @@ Free code signing provided by [SignPath.io](https://about.signpath.io/), certifi
 - Committers and reviewers: [johnnyjong823](https://github.com/johnnyjong823)
 - Approvers: [johnnyjong823](https://github.com/johnnyjong823)
 - 只有從這個 repo 的原始碼、經 GitHub Actions 自動建置的檔案才會簽章，每次發版都要人工核准。
-- Privacy policy：見上面的[隱私](#隱私)段落與 [`src-tauri/LICENSE.txt`](src-tauri/LICENSE.txt) 第六點。程式只在找歌詞時把歌曲資訊送給使用者可以在設定裡關掉的歌詞服務，除此之外不會主動把任何資訊傳到其他網路系統。
+- Privacy policy：見上面的[隱私](#隱私)段落與 [`src-tauri/LICENSE.txt`](src-tauri/LICENSE.txt) 第六點。程式只在找歌詞時把歌曲資訊送給使用者可以在設定裡關掉的歌詞服務；另外啟動時與之後每天一次向 GitHub 查詢最新版本號（只帶程式名稱與版本，可以在設定裡關掉）。除此之外不會主動把任何資訊傳到其他網路系統。
 
 ## 授權
 
@@ -122,6 +123,7 @@ npm run build:win
 | `src-tauri/src/db.rs` `settings.rs` | SQLite 歌詞快取與每首歌偏好、設定 JSON |
 | `src-tauri/src/net.rs` | 網易雲（1.5 秒節流、405 冷卻 30 分鐘、備援端點）、酷狗（KRC 解碼）、LRCLIB；單次請求 4 秒逾時 |
 | `src-tauri/src/paths.rs` | 資料夾、舊版資料搬移、紀錄檔、外部連結白名單 |
+| `src-tauri/src/update.rs` | 新版本提示：啟動 15 秒後與每 24 小時讀 GitHub `releases/latest`，有新版就在面板與系統匣提示（不自動下載） |
 | `web/core/` | 正規化、歌詞解析、評分、時鐘、填色時間、歌詞流程 |
 | `web/providers/` | 網易雲、酷狗、LRCLIB、本機 LRC 資料夾 |
 | `web/sources/smtc.ts` | 認得的播放器清單（`APPS`，要和 `smtc.rs` 一致）、選 Session、時間戳處理 |

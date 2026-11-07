@@ -24,6 +24,7 @@ export interface Settings {
   providers: { netease: boolean; kugou: boolean; lrclib: boolean };
   lrcDir: string;
   pinnedAumid: string | null;
+  checkUpdates: boolean;
   style: Style;
   hotkeys: Record<HotkeyAction, string>;
 }
@@ -47,6 +48,9 @@ export interface SmtcSession {
 
 export interface UiState { edit: boolean; visible: boolean; scale: number }
 
+/** 新版本檢查結果（update.rs）。dismissed = 使用者對這個版本按過「稍後」 */
+export interface UpdateStatus { current: string; latest: string | null; available: boolean; dismissed: boolean }
+
 export const api = {
   settingsGet: () => invoke<Settings>('settings_get'),
   settingsSet: (patch: DeepPartial<Settings>) => invoke<Settings>('settings_set', { patch }),
@@ -67,6 +71,10 @@ export const api = {
   openLink: (which: LinkName) => invoke<void>('open_link', { which }),
   linksEnabled: () => invoke<LinkName[]>('links_enabled'),
   openDoc: (which: 'license' | 'notices') => invoke<void>('open_doc', { which }),
+  updateStatus: () => invoke<UpdateStatus>('update_status'),
+  updateCheck: () => invoke<UpdateStatus>('update_check'),
+  updateOpen: () => invoke<void>('update_open'),
+  updateDismiss: () => invoke<void>('update_dismiss'),
   log: (msg: string) => invoke<void>('log_line', { msg }).catch(() => {}),
 };
 

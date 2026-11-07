@@ -104,6 +104,9 @@ h1 { margin: 0; font-size: 30px; font-weight: normal; letter-spacing: 2px; text-
 .banner .txt { flex: 1; font-size: 15px; }
 .banner .txt b { background: var(--paper); }
 .banner-icon { width: 26px; height: 26px; }
+.upd-bar { display: none; align-items: center; gap: 14px; padding: 12px 16px; margin-bottom: 26px; background: var(--sky-1); }
+.upd-bar.show { display: flex; }
+.upd-bar .txt { flex: 1; font-size: 15px; }
 .hk-warn { display: none; padding: 10px 14px; margin-bottom: 24px; background: #ffe0e0; color: #9b1c1c; font-size: 14px; }
 .hk-warn.show { display: block; }
 

@@ -17,6 +17,13 @@
     <div class="chip px"><span class="led" id="led"></span><span id="chipText">等待播放</span></div>
   </header>
 
+  <div class="upd-bar px" id="updBar">
+    <div data-icon="info" class="banner-icon"></div>
+    <div class="txt" id="updText">有新版本</div>
+    <button class="btn primary" id="updGet"><span data-icon="right"></span>下載新版</button>
+    <button class="btn" id="updLater">稍後</button>
+  </div>
+
   <div class="banner px" id="banner">
     <div data-icon="move" class="banner-icon"></div>
     <div class="txt">現在可以用滑鼠<b>拖曳字幕</b>，右下角可以拉大小。擺好之後按「完成」。</div>
@@ -191,10 +198,12 @@
       <div class="rows">
         <label class="k">開機啟動</label>
         <div class="seg"><button class="btn sm" id="autostartBtn">開機時自動啟動（縮在系統匣）</button></div>
+        <label class="k">新版本</label>
+        <div class="seg"><button class="btn sm" id="updAutoBtn">啟動時與每天自動檢查新版本</button></div>
         <label class="k">資料</label>
         <div class="seg"><button class="btn sm" id="openData"><span data-icon="folder"></span>開啟資料夾</button><span class="path" id="dataPath"></span></div>
       </div>
-      <div class="hint">歌詞快取、偏移、設定都存在這個資料夾，只在這台電腦上。</div>
+      <div class="hint">歌詞快取、偏移、設定都存在這個資料夾，只在這台電腦上。檢查新版本只會連到 GitHub 查最新的版本號，有新版時會提示你，不會自動下載安裝。</div>
     </section>
   </main>
 
@@ -210,6 +219,7 @@
         </div>
       </div>
       <div class="row-btns">
+        <button class="btn sm" id="updCheck"><span data-icon="search"></span>檢查更新</button>
         <button class="btn sm" id="openGithub" data-link="github"><span data-icon="file"></span>原始碼（GitHub）</button>
         <button class="btn sm" id="openLicense"><span data-icon="file"></span>完整使用條款</button>
         <button class="btn sm" id="openNotices"><span data-icon="list"></span>開源元件授權</button>
@@ -237,8 +247,9 @@
       <div class="card-title">隱私</div>
       <ul class="about-list">
         <li>不用註冊帳號，沒有廣告，也不追蹤你的使用行為。</li>
-        <li>找歌詞時，會把<b>正在播放的歌名、歌手與歌曲長度</b>（LRCLIB 另含專輯名稱），以及<b>你手動搜尋時輸入的關鍵字</b>，送給網易雲音樂、酷狗音樂、LRCLIB。可以在「設定 → 歌詞來源」關掉任何一個或全部（全部關掉就只用本機 LRC 檔，不會連網）。酷狗的歌曲搜尋是未加密的 HTTP 連線。</li>
+        <li>找歌詞時，會把<b>正在播放的歌名、歌手與歌曲長度</b>（LRCLIB 另含專輯名稱），以及<b>你手動搜尋時輸入的關鍵字</b>，送給網易雲音樂、酷狗音樂、LRCLIB。可以在「設定 → 歌詞來源」關掉任何一個或全部（全部關掉就只用本機 LRC 檔，不會把歌曲資訊傳出去）。酷狗的歌曲搜尋是未加密的 HTTP 連線。</li>
         <li>從 Windows 媒體控制讀到的歌曲資訊與封面只用來顯示字幕，不會傳出去。</li>
+        <li>檢查新版本時會連到 GitHub 查詢最新的版本號（啟動時與之後每天一次，請求裡只有程式名稱與版本），不會送出歌曲或使用資料。可以在「設定 → 其他」關掉。</li>
         <li>設定、歌詞快取與紀錄檔只存在這台電腦的資料夾（「設定 → 其他 → 資料」），不會上傳。</li>
       </ul>
     </section>

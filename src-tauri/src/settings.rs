@@ -14,6 +14,7 @@ pub fn defaults() -> Value {
         "providers": { "netease": true, "kugou": true, "lrclib": true },
         "lrcDir": "",
         "pinnedAumid": null,
+        "checkUpdates": true,
         "style": {
             "font": "pixel",
             "lines": 2,
@@ -86,6 +87,9 @@ pub fn set(app: &AppHandle, patch: &Value) -> Value {
     }
     if patch.get("pinnedAumid").is_some() {
         crate::tray::refresh(app);
+    }
+    if patch.get("checkUpdates").is_some() {
+        crate::update::on_setting_changed(app);
     }
     let _ = app.emit("settings", &merged);
     merged

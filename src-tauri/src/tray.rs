@@ -1,4 +1,4 @@
-// 系統匣（§4.9）：顯示/隱藏字幕、移動字幕、釘選播放來源、開啟控制面板、開機自動啟動、結束
+// 系統匣（§4.9）：新版本提示、顯示/隱藏字幕、移動字幕、釘選播放來源、開啟控制面板、開機自動啟動、結束
 use serde_json::json;
 use std::sync::Mutex;
 use tauri::menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu};
@@ -55,12 +55,19 @@ fn build_menu(app: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     let m_quit = MenuItem::with_id(app, "quit", "結束魔唱", true, None::<&str>)?;
     let sep1 = PredefinedMenuItem::separator(app)?;
     let sep2 = PredefinedMenuItem::separator(app)?;
-    Menu::with_items(app, &[&m_panel, &sep1, &m_toggle, &m_move, &m_bottom, &src, &m_auto, &sep2, &m_quit])
+    let menu = Menu::with_items(app, &[&m_panel, &sep1, &m_toggle, &m_move, &m_bottom, &src, &m_auto, &sep2, &m_quit])?;
+    // 有新版本時放在最上面（縮在系統匣啟動、沒開面板的人也看得到）
+    if let Some(v) = crate::update::available() {
+        menu.prepend(&PredefinedMenuItem::separator(app)?)?;
+        menu.prepend(&MenuItem::with_id(app, "update", format!("有新版本 v{v}，按這裡下載"), true, None::<&str>)?)?;
+    }
+    Ok(menu)
 }
 
 fn on_menu(app: &AppHandle, id: &str) {
     match id {
         "panel" => crate::windows_ui::show_panel(app.clone()),
+        "update" => crate::update::open(),
         "toggle" => {
             crate::windows_ui::set_overlay_visible(app.clone(), None);
         }
@@ -98,6 +105,11 @@ pub fn refresh(app: &AppHandle) {
     let _ = app.run_on_main_thread(move || {
         if let (Some(tray), Ok(menu)) = (app2.tray_by_id("tray"), build_menu(&app2)) {
             let _ = tray.set_menu(Some(menu));
+            let tip = match crate::update::available() {
+                Some(v) => format!("魔唱（有新版本 v{v}）"),
+                None => "魔唱".to_string(),
+            };
+            let _ = tray.set_tooltip(Some(tip));
         }
     });
 }
