@@ -25,8 +25,8 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<()> {
         .inner_size(OV_W, OV_H)
         .visible(false)
         .build()?;
-    ov.set_ignore_cursor_events(true)?;
     set_no_activate(&ov);
+    set_click_through(&ov, true);
     if !restore_geometry(&ov) {
         place(&ov, "bottom");
     }
@@ -79,7 +79,7 @@ pub fn set_edit_mode(app: AppHandle, on: Option<bool>) -> bool {
             show_no_activate(&ov);
             let _ = app.emit("overlay-visible", true);
         }
-        let _ = ov.set_ignore_cursor_events(!on);
+        set_click_through(&ov, !on);
         if !on {
             save_geometry(&ov);
         }
@@ -96,7 +96,7 @@ pub fn set_overlay_visible(app: AppHandle, visible: Option<bool>) -> bool {
     if visible {
         show_no_activate(&ov);
     } else {
-        let _ = ov.hide();
+        hide(&ov);
     }
     if !visible && EDIT_MODE.load(Ordering::SeqCst) {
         set_edit_mode(app.clone(), Some(false));
@@ -214,6 +214,38 @@ fn restore_geometry(w: &WebviewWindow) -> bool {
     let _ = w.set_size(PhysicalSize::new((lw * sf) as u32, (lh * sf) as u32));
     let _ = w.set_position(pos);
     true
+}
+
+// 字幕視窗的顯示、隱藏、點穿一律直接用 Win32，不要呼叫 Tauri 的 show / hide / set_ignore_cursor_events：
+// tao 自己記一份「是否顯示」，我們用 ShowWindow 顯示它不知道；之後只要 tao 改任何視窗旗標，
+// 就會依它記的狀態把視窗藏起來，並整個重寫 GWL_EXSTYLE（洗掉 WS_EX_NOACTIVATE / WS_EX_TOOLWINDOW）。
+// v0.4.1 以前「移動字幕」一切換點穿字幕就消失，就是這個原因。
+
+fn hide(w: &WebviewWindow) {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::{ShowWindow, SW_HIDE};
+    if let Ok(h) = w.hwnd() {
+        unsafe {
+            let _ = ShowWindow(HWND(h.0 as _), SW_HIDE);
+        }
+    }
+}
+
+/// 點穿：和 tao 的 set_ignore_cursor_events 一樣切換 WS_EX_TRANSPARENT | WS_EX_LAYERED，但保留其他樣式
+fn set_click_through(w: &WebviewWindow, on: bool) {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::{
+        GetWindowLongPtrW, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, SWP_FRAMECHANGED, SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE,
+        SWP_NOZORDER, WS_EX_LAYERED, WS_EX_TRANSPARENT,
+    };
+    let Ok(h) = w.hwnd() else { return };
+    let bits = (WS_EX_TRANSPARENT.0 | WS_EX_LAYERED.0) as isize;
+    unsafe {
+        let hwnd = HWND(h.0 as _);
+        let ex = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, if on { ex | bits } else { ex & !bits });
+        let _ = SetWindowPos(hwnd, None, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
+    }
 }
 
 /// 顯示字幕視窗但不啟用它（SW_SHOWNOACTIVATE），避免按快捷鍵顯示字幕時搶走 VS Code 的焦點
