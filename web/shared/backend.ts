@@ -29,7 +29,7 @@ export interface Settings {
   hotkeys: Record<HotkeyAction, string>;
 }
 
-export type LinkName = 'site' | 'github' | 'donate';
+export type LinkName = 'site' | 'github' | 'donate' | 'feedback';
 export type HotkeyAction = 'toggle' | 'edit' | 'earlier' | 'later' | 'earlierFine' | 'laterFine' | 'resetOffset' | 'research';
 export interface HotkeyStatus { action: HotkeyAction; accel: string; ok: boolean; error?: string | null }
 

@@ -106,11 +106,14 @@ const LINKS: &[(&str, &str)] = &[
     ("site", "https://johnnyx9487.bdcweb.org/"),
     ("github", "https://github.com/johnnyjong823/magising"),
     ("donate", ""), // 綠界實況主收款的斗內網址
+    // Google 表單的預填網址，{ver} 會換成目前版本號（docs/feedback-form.gs 產生）
+    ("feedback", "https://docs.google.com/forms/d/e/1FAIpQLScOZ6nKcvNXuqJ-ZHkwx6xhNHK7xI_isfIhVouvxRvpFptV0g/viewform?usp=pp_url&entry.1436665323={ver}"),
 ];
 
 #[tauri::command]
 pub fn open_link(which: String) {
     if let Some((_, url)) = LINKS.iter().find(|(k, u)| *k == which && !u.is_empty()) {
+        let url = url.replace("{ver}", env!("CARGO_PKG_VERSION"));
         let _ = std::process::Command::new("explorer.exe").arg(url).spawn();
     }
 }

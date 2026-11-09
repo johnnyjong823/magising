@@ -437,6 +437,7 @@ $('openLicense').onclick = () => api.openDoc('license').catch((e) => tip('打不
 $('openNotices').onclick = () => api.openDoc('notices').catch((e) => tip('打不開：' + e));
 $('promo').onclick = () => api.openLink('site');
 $('openGithub').onclick = () => api.openLink('github');
+$('feedbackBtn').onclick = () => api.openLink('feedback');
 $('donateBtn').onclick = $('donateMini').onclick = () => api.openLink('donate');
 // 沒設定網址的連結（例如斗內還沒申請好）整塊藏起來
 api.linksEnabled().then((on) => {

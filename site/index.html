@@ -366,6 +366,7 @@ footer .legal p { margin: 0 0 6px; }
         <span data-dl-label>免費下載 Windows 版</span>
       </a>
       <a class="ghost" data-donate href="" hidden>斗內請開發者喝飲料</a>
+      <a class="ghost" data-feedback href="" hidden>給我們意見回饋</a>
       <a class="ghost" href="https://github.com/johnnyjong823/magising">GitHub 給個星星</a>
     </div>
     <img class="rv" src="shots/overlay.png" width="2050" height="328" alt="" loading="lazy">
@@ -391,7 +392,8 @@ footer .legal p { margin: 0 0 6px; }
         <h4>開源</h4>
         <ul>
           <li><a href="https://github.com/johnnyjong823/magising">原始碼</a></li>
-          <li><a href="https://github.com/johnnyjong823/magising/issues">回報問題</a></li>
+          <li><a data-feedback href="" hidden>意見回饋</a></li>
+          <li><a href="https://github.com/johnnyjong823/magising/issues">回報問題（GitHub）</a></li>
           <li><a href="https://github.com/johnnyjong823/magising#code-signing-policy">Code signing policy</a></li>
         </ul>
       </div>
@@ -414,6 +416,12 @@ footer .legal p { margin: 0 0 6px; }
 (() => {
   const REPO = 'johnnyjong823/magising';
   const DONATE_URL = '';   // 綠界斗內網址申請好之後填這裡（同 README 的 DONATE_LINK、paths.rs 的 LINKS）
+  const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScOZ6nKcvNXuqJ-ZHkwx6xhNHK7xI_isfIhVouvxRvpFptV0g/viewform'; // Google 表單網址（不帶版本號的那個；同 paths.rs 的 LINKS feedback）
+
+  // ---------- 意見回饋：有網址才顯示 ----------
+  if (FEEDBACK_URL) {
+    document.querySelectorAll('[data-feedback]').forEach(a => { a.href = FEEDBACK_URL; a.target = '_blank'; a.rel = 'noopener'; a.hidden = false; });
+  }
 
   // ---------- 斗內：有網址才顯示 ----------
   if (DONATE_URL) {
