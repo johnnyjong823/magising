@@ -6,6 +6,13 @@
 
 免費、開源（GPL-3.0）、沒有廣告。
 
+[![GitHub stars](https://img.shields.io/github/stars/johnnyjong823/magising?style=social)](https://github.com/johnnyjong823/magising/stargazers)
+[![最新版本](https://img.shields.io/github/v/release/johnnyjong823/magising?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/johnnyjong823/magising/releases/latest)
+[![下載次數](https://img.shields.io/github/downloads/johnnyjong823/magising/total?label=%E4%B8%8B%E8%BC%89%E6%AC%A1%E6%95%B8)](https://github.com/johnnyjong823/magising/releases)
+
+> ⭐ **覺得好用的話，請按右上角的 Star 幫魔唱點一顆星！**
+> 星星越多，越有機會通過免費程式碼簽章的審核，以後安裝時就不會再跳出 Windows 的警告。按星星不用花錢，只要有 GitHub 帳號就好。
+
 ## 功能
 
 - **自動找歌詞**：偵測 Windows 媒體控制裡正在播放的歌，依語言到網易雲音樂、酷狗音樂、LRCLIB 找最符合的歌詞。
@@ -22,7 +29,7 @@
 
 - 系統需求：Windows 10 21H2 以上或 Windows 11。
 - 少數 Windows 10 沒有 WebView2 時，安裝程式會自動從微軟下載安裝。
-- 目前安裝檔還沒有程式碼簽章，Windows 可能跳出「Windows 已保護您的電腦」：按「**其他資訊 → 仍要執行**」。簽章正在申請中，見下方 [Code signing policy](#code-signing-policy)。
+- 目前安裝檔還沒有程式碼簽章，Windows 可能跳出「Windows 已保護您的電腦」：按「**其他資訊 → 仍要執行**」。這是因為 Windows 還不認得這個新程式，見下方 [Code signing policy](#code-signing-policy)。
 
 ### 預設快捷鍵
 
@@ -52,7 +59,9 @@
 
 ## 贊助開發者
 
-魔唱完全免費。如果它陪你唱得開心，歡迎斗內請開發者喝杯飲料，支持之後繼續更新！程式裡「關於」頁也有斗內按鈕。斗內完全自願，不影響任何功能。
+魔唱完全免費。最簡單的支持方式是到 GitHub **按一顆 ⭐ Star**，或分享給喜歡唱歌的朋友。
+
+如果它陪你唱得開心，也歡迎斗內請開發者喝杯飲料，支持之後繼續更新！程式裡「關於」頁也有斗內按鈕。斗內完全自願，不影響任何功能。
 
 <!-- DONATE_LINK：綠界實況主收款的斗內網址申請好之後填在這裡，同時填進 src-tauri/src/paths.rs 的 LINKS -->
 
@@ -62,9 +71,11 @@
 
 ## Code signing policy
 
-Windows 安裝檔的程式碼簽章正在向 SignPath Foundation 申請（申請通過後才會生效）：
+目前 Windows 安裝檔**沒有程式碼簽章**，所以 Windows 可能顯示「無法辨識的應用程式」警告。安裝檔由 GitHub Actions 從這個 repo 公開的原始碼自動建置，Release 頁上的檔案就是建置的結果。
 
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+我們曾申請 SignPath Foundation 的免費開源簽章，對方回覆專案還太新、需要更多社群參與（GitHub 星星、文章、討論）後再申請。等魔唱有更多人使用後會重新申請；如果你覺得好用，幫忙按 ⭐ Star 就是最直接的幫助。
+
+未來取得簽章後，會依照以下規則：
 
 - Committers and reviewers: [johnnyjong823](https://github.com/johnnyjong823)
 - Approvers: [johnnyjong823](https://github.com/johnnyjong823)

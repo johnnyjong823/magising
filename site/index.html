@@ -208,7 +208,7 @@ footer .legal p { margin: 0 0 6px; }
       <a href="#install">安裝</a>
       <a href="#privacy">隱私</a>
       <a href="#keys">快捷鍵</a>
-      <a href="https://github.com/johnnyjong823/magising">GitHub</a>
+      <a href="https://github.com/johnnyjong823/magising">★ GitHub<span data-stars></span></a>
     </nav>
     <a class="btn btn-blue" data-dl href="https://github.com/johnnyjong823/magising/releases">免費下載</a>
   </div>
@@ -223,7 +223,7 @@ footer .legal p { margin: 0 0 6px; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M12 3v12M6 10l6 6 6-6M4 20h16"/></svg>
         <span data-dl-label>免費下載 Windows 版</span>
       </a>
-      <a class="ghost" href="https://github.com/johnnyjong823/magising">在 GitHub 看原始碼</a>
+      <a class="ghost" href="https://github.com/johnnyjong823/magising">★ 到 GitHub 給顆星<span data-stars></span></a>
     </div>
     <p class="meta rv" style="--d:.25s" data-dl-meta>Windows 10 21H2 以上 / Windows 11 · 不需要管理員權限</p>
     <figure class="stage rv" style="--d:.3s">
@@ -296,7 +296,7 @@ footer .legal p { margin: 0 0 6px; }
     <div class="layer">
       <div class="tab"><em>02</em>執行安裝</div>
       <div class="inner">
-        <p>依畫面按下一步。少數 Windows 10 沒有 WebView2 時，會自動從微軟下載安裝。<br><br>如果跳出「<b>Windows 已保護您的電腦</b>」，按「<b>其他資訊</b>」→「<b>仍要執行</b>」。這是因為安裝檔還沒有程式碼簽章，Windows 還不認得這個新程式；簽章正在申請中。</p>
+        <p>依畫面按下一步。少數 Windows 10 沒有 WebView2 時，會自動從微軟下載安裝。<br><br>如果跳出「<b>Windows 已保護您的電腦</b>」，按「<b>其他資訊</b>」→「<b>仍要執行</b>」。這是因為安裝檔還沒有程式碼簽章，Windows 還不認得這個新程式。<br><br>想讓這個警告消失？請到 <a href="https://github.com/johnnyjong823/magising"><b>GitHub 幫魔唱按一顆 ★ Star</b></a>。星星越多，越有機會通過免費程式碼簽章的審核。</p>
         <div class="ss" aria-hidden="true">
           <strong>Windows 已保護您的電腦</strong>
           Microsoft Defender SmartScreen 已防止某個無法辨識的應用程式啟動。<br><u>其他資訊</u>
@@ -367,7 +367,7 @@ footer .legal p { margin: 0 0 6px; }
       </a>
       <a class="ghost" data-donate href="" hidden>斗內請開發者喝飲料</a>
       <a class="ghost" data-feedback href="" hidden>給我們意見回饋</a>
-      <a class="ghost" href="https://github.com/johnnyjong823/magising">GitHub 給個星星</a>
+      <a class="ghost" href="https://github.com/johnnyjong823/magising">★ GitHub 給個星星<span data-stars></span></a>
     </div>
     <img class="rv" src="shots/overlay.png" width="2050" height="328" alt="" loading="lazy">
   </div>
@@ -428,6 +428,16 @@ footer .legal p { margin: 0 0 6px; }
     document.querySelectorAll('[data-donate]').forEach(a => { a.href = DONATE_URL; a.hidden = false; });
     document.querySelectorAll('[data-donate-text]').forEach(s => { s.textContent = '如果它陪你唱得開心，歡迎斗內支持之後繼續更新。'; });
   }
+
+  // ---------- GitHub 星星數：有星星才顯示數字 ----------
+  fetch(`https://api.github.com/repos/${REPO}`, { headers: { Accept: 'application/vnd.github+json' } })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(repo => {
+      const n = repo.stargazers_count;
+      if (!n) return;
+      document.querySelectorAll('[data-stars]').forEach(s => { s.textContent = ` · ${n.toLocaleString('zh-TW')}`; });
+    })
+    .catch(() => {});
 
   // ---------- 下載：抓最新正式版的安裝檔，抓不到就維持連到 Releases 頁 ----------
   fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers: { Accept: 'application/vnd.github+json' } })
